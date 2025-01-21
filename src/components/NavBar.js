@@ -43,6 +43,7 @@ export default function NavBar() {
                                 <Nav.Link href="/login">Log In</Nav.Link>
                             }
                             <Nav.Link href="/contact-us">Contact Us</Nav.Link>
+                            <Nav.Link href="/about-us">About Us</Nav.Link>
                             <Nav.Link href="/cart">Cart</Nav.Link>
                             <Nav.Link href="/orders">Orders</Nav.Link>
                         </Nav>

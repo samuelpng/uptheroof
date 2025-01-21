@@ -37,7 +37,7 @@ export default function Login() {
         <div className="row mt-3">
           <div className="form mx-auto col-md-6 col-lg-5 mt-4 p-4 shadow-lg" style={{ border: "1px solid lightslategray" }}>
             <h1 className="text-center" style={{ fontFamily: "Righteous" }}>Sign In</h1>
-            <img src="/images/kickscity-logo.png" style={{ width: "50%", marginLeft: "25%" }}></img>
+            <img src="/images/sports-engineering-logo.png" style={{ width: "50%", marginLeft: "25%" }}></img>
 
             {/* <p className="text-center">Lets us create your account</p> */}
             <Form className="register-form my-4">

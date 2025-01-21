@@ -20,6 +20,7 @@ import ProductsProvider from './providers/ProductsProvider';
 import CustomerProvider from './providers/CutomerProvider';
 import Orders from './pages/Orders';
 import ContactUs from './pages/ContactUs';
+import AboutUs from './pages/AboutUs';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/contact-us" element={<ContactUs />} />
+              <Route path="/about-us" element={<AboutUs />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/stripe" element={<Stripe />} />
               <Route path="/orders" element={<Orders />} />
