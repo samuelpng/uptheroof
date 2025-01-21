@@ -25,7 +25,7 @@ export default function NavBar() {
         <Fragment>
             <Navbar bg="light" expand="lg" sticky="top" className="lg-navbar">
                 <Container>
-                    <Navbar.Brand href="/" className="ms-2"><img src="/images/sports-engineering-logo.png" style={{ height: "40px" }}></img></Navbar.Brand>
+                    <Navbar.Brand href="/" className="ms-2"><img src="/images/sports-engineering-logo.png" alt="Company Logo" style={{ height: "40px" }}></img></Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
