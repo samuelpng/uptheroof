@@ -19,6 +19,7 @@ import Stripe from './components/Stripe'
 import ProductsProvider from './providers/ProductsProvider';
 import CustomerProvider from './providers/CutomerProvider';
 import Orders from './pages/Orders';
+import ContactUs from './pages/ContactUs';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/contact-us" element={<ContactUs />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/stripe" element={<Stripe />} />
               <Route path="/orders" element={<Orders />} />

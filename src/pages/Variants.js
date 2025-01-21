@@ -36,7 +36,7 @@ export default function Variants(props) {
     }
 
     const getSimilarProducts = async (brandId) => {
-        console.log(brandId)
+        // console.log(brandId)
         let response = await axios.get(BASE_URL + `products/similar/${brandId}`)
         const products = response.data
         console.log(products)
@@ -127,10 +127,10 @@ export default function Variants(props) {
                             <h2 className="mt-3">{product.name}</h2>
                             {product.brand.brand_name} {product.collection.collection} Collection <br />
                             {product.surface.surface} Football Boot <br /> <br />
-                            <h5>S$ {(product.cost / 100).toFixed(2)}</h5>
+                            {/* <h5>S$ {(product.cost / 100).toFixed(2)}</h5> */}
                             <br /><br />
 
-                            <h5 className="mb-3">Sizes</h5>
+                            <h5 className="mb-3">Variants</h5>
                             <div className="sizeBox-container mt-1">
                                 {variants.map(v => {
                                     return (
@@ -201,7 +201,7 @@ export default function Variants(props) {
                                                         <Card.Title>{p.name}</Card.Title>
                                                         <Card.Text>
                                                             {p.surface.surface} Boots <br />
-                                                            S$ {(p.cost / 100).toFixed(2)}
+                                                            {/* S$ {(p.cost / 100).toFixed(2)} */}
                                                         </Card.Text>
                                                     </Card.Body>
                                                 </Card>

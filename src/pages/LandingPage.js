@@ -51,6 +51,7 @@ export default function LandingPage() {
 
   return (
     <Fragment>
+      <div className="container">
       <div >
         <LandingCarousel />
       </div>
@@ -68,7 +69,7 @@ export default function LandingPage() {
                     <Card.Title>{p.name}</Card.Title>
                     <Card.Text>
                       {p.surface.surface} Boots <br />
-                      S$ {(p.cost / 100).toFixed(2)}
+                      {/* S$ {(p.cost / 100).toFixed(2)} */}
                     </Card.Text>
                   </Card.Body>
                 </Card>
@@ -80,21 +81,21 @@ export default function LandingPage() {
       </div>
 
       <div>
-        <h1 className="text-center my-3" style={{fontFamily:"Righteous"}}>SHOP BRANDS</h1>
+        <h1 className="text-center my-3" style={{fontFamily:"Righteous"}}>SHOP BY SPORT</h1>
         <div className="row ">
           <a className="col-md-4 p-3" href="/boots/3">
-            <img src="/images/puma.png" style={{ width: "100%" }}></img>
+            <img src="/images/floorball.png" style={{ width: "100%" }}></img>
           </a>
           <a className="col-md-4 p-3" href="/boots/2">
-            <img src="/images/adidas.png" style={{ width: "100%" }}></img>
+            <img src="/images/football.png" style={{ width: "100%" }}></img>
           </a>
           <a className="col-md-4 p-3" href="/boots/1">
-            <img src="/images/nike.png" style={{ width: "100%" }}></img>
+            <img src="/images/basketball.png" style={{ width: "100%" }}></img>
           </a>
         </div>
       </div>
-      <div style={{ height: "40px" }}></div>
-
+      <div style={{ height: "40px" }}></div>\
+      </div>
     </Fragment>
   )
 }

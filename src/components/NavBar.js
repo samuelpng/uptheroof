@@ -25,15 +25,15 @@ export default function NavBar() {
         <Fragment>
             <Navbar bg="light" expand="lg" sticky="top" className="lg-navbar">
                 <Container>
-                    <Navbar.Brand href="/" className="ms-2"><img src="/images/kickscity-logo.png" style={{ height: "40px" }}></img></Navbar.Brand>
+                    <Navbar.Brand href="/" className="ms-2"><img src="/images/sports-engineering-logo.png" style={{ height: "40px" }}></img></Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
-                            <Nav.Link href="/boots/room" className="me-3">Boot Room</Nav.Link>
-                            <NavDropdown title="Shop Brands" id="basic-nav-dropdown">
-                                <NavDropdown.Item href="/boots/1">Nike</NavDropdown.Item>
-                                <NavDropdown.Item href="/boots/2">Adidas</NavDropdown.Item>
-                                <NavDropdown.Item href="/boots/3">Puma</NavDropdown.Item>
+                            <Nav.Link href="/boots/room" className="me-3">Shop All</Nav.Link>
+                            <NavDropdown title="Shop by Sport" id="basic-nav-dropdown">
+                                <NavDropdown.Item href="/boots/1">Floorball</NavDropdown.Item>
+                                <NavDropdown.Item href="/boots/2">Football</NavDropdown.Item>
+                                <NavDropdown.Item href="/boots/3">Basketball</NavDropdown.Item>
                             </NavDropdown>
                         </Nav>
                         <Nav className="ms-auto">
@@ -42,6 +42,7 @@ export default function NavBar() {
                                 :
                                 <Nav.Link href="/login">Log In</Nav.Link>
                             }
+                            <Nav.Link href="/contact-us">Contact Us</Nav.Link>
                             <Nav.Link href="/cart">Cart</Nav.Link>
                             <Nav.Link href="/orders">Orders</Nav.Link>
                         </Nav>

@@ -14,7 +14,7 @@ export default function ProductCard(props) {
                                 <Card.Title>{p.name}</Card.Title>
                                 <Card.Text>
                                     {p.surface.surface} Boots <br />
-                                    S$ {(p.cost / 100).toFixed(2)}
+                                    {/* S$ {(p.cost / 100).toFixed(2)} */}
                                 </Card.Text>
                             </Card.Body>
                         </Card>

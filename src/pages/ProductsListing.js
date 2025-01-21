@@ -215,8 +215,9 @@ export default function ProductsListing(props) {
     if (searchResults) {
         return (
             <Fragment>
+                <div className="container">
                  <div>
-                        <img src="/images/bootroom.png" style={{width:"100%"}} className="mb-3"></img>
+                        <img src="/images/se-banner.png" style={{width:"100%"}} className="mb-3"></img>
                     </div>
                 <Container>
                    
@@ -374,6 +375,7 @@ export default function ProductsListing(props) {
 
                     </Offcanvas.Body>
                 </Offcanvas>
+                </div>
             </Fragment>
         )
     }

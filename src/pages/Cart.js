@@ -116,7 +116,7 @@ export default function Cart() {
                         </div>
                         <div className="col-6 ps-3 pt-2 pt-md-3">
                           <h4 className="cartItemName pe-1">{c.variant.product.name}</h4>
-                          <div className="mt-1">S$ {(c.variant.product.cost / 100).toFixed(2)}</div>
+                          {/* <div className="mt-1">S$ {(c.variant.product.cost / 100).toFixed(2)}</div> */}
                           <div>Size: {c.variant.size.size}</div>
                           {/* <div className="mt-2">
                             {c.quantity}
@@ -149,7 +149,7 @@ export default function Cart() {
                           <Fragment>
                             <div style={{ display: "flex", justifyContent: "space-between" }}>
                               <div>{c.variant.product.name}</div>
-                              <div>S${(c.variant.product.cost * c.quantity / 100).toFixed(2)}</div>
+                              {/* <div>S${(c.variant.product.cost * c.quantity / 100).toFixed(2)}</div> */}
                             </div>
                             <p className="mb-3">x{c.quantity}</p>
                           </Fragment>
@@ -159,11 +159,11 @@ export default function Cart() {
                     <hr />
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
                       <div>Total</div>
-                      <div>S$ {(total / 100).toFixed(2)}</div>
+                      {/* <div>S$ {(total / 100).toFixed(2)}</div> */}
                     </div>
                     </div>
                     <div className="d-grid my-4 mx-2">
-                      <Button variant="dark" className="rounded-0 py-2" type="button" onClick={checkout} >CHECKOUT</Button>
+                      <Button variant="dark" className="rounded-0 py-2" type="button" onClick={checkout} >ENQUIRE</Button>
                     </div>
 
 
