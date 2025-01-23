@@ -33,7 +33,7 @@ function App() {
 
             <Routes>
               <Route path="/" element={<LandingPage />} />
-              <Route path="/boots/:brand_id" element={<ProductsListing />} />
+              <Route path="/shop/:brand_id" element={<ProductsListing />} />
               <Route path="/products/:productId" element={<Variants />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />

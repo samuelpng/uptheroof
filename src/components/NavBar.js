@@ -29,11 +29,32 @@ export default function NavBar() {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
-                            <Nav.Link href="/boots/room" className="me-3">Shop All</Nav.Link>
+                            <Nav.Link href="/shop/room" className="me-3">Shop All</Nav.Link>
                             <NavDropdown title="Shop by Sport" id="basic-nav-dropdown">
-                                <NavDropdown.Item href="/boots/1">Floorball</NavDropdown.Item>
-                                <NavDropdown.Item href="/boots/2">Football</NavDropdown.Item>
-                                <NavDropdown.Item href="/boots/3">Basketball</NavDropdown.Item>
+                                <NavDropdown.Item href="/shop/room" className="dropdown-submenu">
+                                    <span className="dropdown-item-text">All</span>
+                                </NavDropdown.Item>
+                                <NavDropdown.Item className="dropdown-submenu">
+                                    <span className="dropdown-item-text">Sports</span>
+                                    <ul className="dropdown-menu">
+                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/athletics";}}>Atheltics</NavDropdown.Item></li>
+                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/badminton";}}>Badminton</NavDropdown.Item></li>
+                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/basketball"}}>Basektball</NavDropdown.Item></li>
+                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/softball"}}>Softball</NavDropdown.Item></li>
+                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/netball"}}>Netball</NavDropdown.Item></li>
+                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/cricket"}}>Cricket</NavDropdown.Item></li>
+                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/frisbee"}}>Frisbee</NavDropdown.Item></li>
+                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/golf"}}>Golf</NavDropdown.Item></li>
+                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/gymnastics"}}>Gymnastics</NavDropdown.Item></li>
+                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/handball"}}>Handball</NavDropdown.Item></li>
+                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/hockey-floorball"}}>Hockey & Floorball</NavDropdown.Item></li>
+                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/rugby"}}>Rugby</NavDropdown.Item></li>
+                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/soccer"}}>Soccer</NavDropdown.Item></li>
+                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/swimming"}}>Swimming / Water Sports</NavDropdown.Item></li>
+                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/table-tennis"}}>Table Tennis</NavDropdown.Item></li>
+                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/volleyball"}}>Volleyball</NavDropdown.Item></li>
+                                    </ul>
+                                </NavDropdown.Item>
                             </NavDropdown>
                         </Nav>
                         <Nav className="ms-auto">
