@@ -14,55 +14,55 @@ const AdminProductList = () => {
   const navigate = useNavigate()
 
   // Fetch products based on search & filters
-  // const fetchProducts = async () => {
-  //   let query = supabase.from("products").select("*");
-
-  //   if (search) {
-  //     query = query.ilike("name", `%${search}%`); // Case-insensitive search
-  //   }
-   
-  //   //togo: add categories
-  //   if (category){ 
-  //     query = query.eq("products_categories.category_id", category);
-  //   }
-
-  //   console.log('sport', sport)
-  //   if (sport) {
-  //     query = query.eq("sport_id", sport);
-  //   }
-
-  //   const { data, error } = await query;
-  //   if (error) {
-  //     console.error("Error fetching products:", error);
-  //   } else {
-  //     setProducts(data);
-  //   }
-  // };
-
   const fetchProducts = async () => {
-    let query = supabase
-      .from("products")
-      .select(`
-        id, name, price, 
-        sports(id, name), 
-        products_categories(category_id, categories(id, name))
-      `)
-      .leftJoin("sports", "products.sport_id", "sports.id")
-      .leftJoin("products_categories", "products.id", "products_categories.product_id")
-      .leftJoin("categories", "products_categories.category_id", "categories.id");
-  
-    if (search) query = query.ilike("products.name", `%${search}%`);
-    if (category) query = query.eq("categories.id", category);
-    if (sport) query = query.eq("sports.id", sport);
-  
+    let query = supabase.from("products").select("*");
+
+    if (search) {
+      query = query.ilike("name", `%${search}%`); // Case-insensitive search
+    }
+   
+    //togo: add categories
+    if (category){ 
+      query = query.eq("products_categories.category_id", category);
+    }
+
+    console.log('sport', sport)
+    if (sport) {
+      query = query.eq("sport_id", sport);
+    }
+
     const { data, error } = await query;
     if (error) {
       console.error("Error fetching products:", error);
     } else {
-      console.log("Fetched products:", data);
       setProducts(data);
     }
   };
+
+  // const fetchProducts = async () => {
+  //   let query = supabase
+  //     .from("products")
+  //     .select(`
+  //       id, name, price, 
+  //       sports(id, name), 
+  //       products_categories(category_id, categories(id, name))
+  //     `)
+  //     .leftJoin("sports", "products.sport_id", "sports.id")
+  //     .leftJoin("products_categories", "products.id", "products_categories.product_id")
+  //     .leftJoin("categories", "products_categories.category_id", "categories.id");
+  
+  //   if (search) query = query.ilike("products.name", `%${search}%`);
+  //   if (category) query = query.eq("categories.id", category);
+  //   if (sport) query = query.eq("sports.id", sport);
+  
+  //   const { data, error } = await query;
+  //   if (error) {
+  //     console.error("Error fetching products:", error);
+  //   } else {
+  //     console.log("Fetched products:", data);
+  //     setProducts(data);
+  //   }
+  // };
   
   
 
