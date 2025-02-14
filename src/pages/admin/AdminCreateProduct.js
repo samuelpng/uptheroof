@@ -6,31 +6,43 @@ import { Container, Form, Button, FormSelect } from "react-bootstrap";
 import { supabase } from "../../supabaseClient";
 import { useEffect } from "react";
 import React from "react";
-import ReactCrop from "react-image-crop";
 import Select from "react-select";
 import ImageUploader from "../../components/ImageUploader";
+import Swal from 'sweetalert2'
 
 export default function AdminCreate() {
   const context = useContext(CustomerContext);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
-    sport: 0,
+    sport: undefined,
     categories: [],
-    image_url: "",
-    description: ""
+    description: "",
   });
   const [sports, setSports] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [images, setImages] = useState([]);
   const [uploading, setUploading] = useState(false);
-  const [uploadedImages, setUploadedImages] = useState([])
+  const [uploadedImages, setUploadedImages] = useState([]);
+  const [errors, setErrors] = useState({})
 
   useEffect(() => {
     fetchSports();
     fetchCategories();
   }, []);
+
+  const reset = () => {
+    setFormData({
+        name: "",
+        sport: undefined,
+        categories: [],
+        description: "",
+      })
+      setSelectedCategories([])
+      setImages([])
+      setUploadedImages([])
+  }
 
   const updateFormField = (e) => {
     setFormData({
@@ -40,20 +52,6 @@ export default function AdminCreate() {
   };
 
   const fetchSports = async () => {
-    // const {
-    //   data: { user },
-    // } = await supabase.auth.getUser();
-
-    // if (user) {
-    //   const { data, error } = await supabase
-    //     .from("users")
-    //     .select("*")
-    //     .eq("auth_id", user.id)
-    //     .single();
-
-    //   if (error) console.error("Error fetching user:", error.message);
-    //   else console.log("User profile:", data);
-    // }
     const { data, error } = await supabase.from("sports").select("*");
 
     if (error) {
@@ -75,28 +73,6 @@ export default function AdminCreate() {
     }
   };
 
-//   const addProduct = async () => {
-//     // let form = formData.sport;
-
-//     // Insert sport details into `sports` table
-//     const { data, error } = await supabase
-//       .from("sports")
-//       .insert([
-//         {
-//           name: formData.name,
-//           description: formData.description,
-//           sport_id: formData.sport,
-//           image_url: uploadedImages[0],
-//           image_url2: uploadedImages[1],
-//           image_url3: uploadedImages[2]
-//         },
-//       ])
-//       .select();
-
-//     if (error) console.error("Error inserting sport:", error.message);
-//     else console.log("Sport added:", data[0].sport_name);
-//   };
-
   const formattedOptions = categories.map((opt) => ({
     value: opt.id,
     label: opt.category_name,
@@ -106,10 +82,29 @@ export default function AdminCreate() {
     setSelectedCategories(selected);
   };
 
-  const createProduct = async () => {
+  const validateForm = () => {
+    let errors = {};
+    if (!formData.name.trim()) errors.name = "Product name is required.";
+    if (!formData.sport) errors.sport = "Please select a sport.";
+    if (selectedCategories.length === 0) errors.categories = "Select at least one category.";
+    if (images.length === 0) errors.images = "Upload at least one image.";
 
-    //upload images to supabase
-    uploadToSupabase();
+    setErrors(errors);
+    return Object.keys(errors).length === 0; // Returns true if no errors
+  };
+
+  const createProduct = async () => {
+    validateForm()
+
+    // Wait for images to finish uploading before proceeding
+    const uploadedUrls = await uploadToSupabase(); 
+
+    console.log("uploaded image", uploadedUrls);
+
+    if (!uploadedUrls || uploadedUrls.length === 0) {
+        console.error("No images uploaded!");
+        return;
+    }
 
     const { data, error } = await supabase
       .from("products")
@@ -117,10 +112,10 @@ export default function AdminCreate() {
         {
           name: formData.name,
           sport_id: formData.sport,
-          description: formData.description,
-          image_url: uploadedImages[0],
-          image_url2: uploadedImages[1],
-          image_url3: uploadedImages[2]
+          description: formData.description || null,
+          image_url: uploadedUrls[0] || null,
+          image_url2: uploadedUrls[1] || null,
+          image_url3: uploadedUrls[2] || null,
         },
       ])
       .select(); // Select returns the inserted row(s)
@@ -137,13 +132,18 @@ export default function AdminCreate() {
       return;
     }
 
-    // Now, insert categories
-    const categories = selectedCategories; // Assuming this is an array of category IDs
+    // Insert categories
+    const categories = selectedCategories;
 
-    const categoryInserts = categories.map((categoryId) => ({
-      product_id: productId,
-      category_id: categoryId,
-    }));
+    // const categoryInserts = categories.map((categoryId) => ({
+    //   product_id: productId,
+    //   category_id: categoryId,
+    // }));
+
+    const categoryInserts = selectedCategories.map(({ value }) => ({
+        product_id: productId,
+        category_id: value,
+      }));
 
     const { data: data2, error: error2 } = await supabase
       .from("products_categories")
@@ -154,46 +154,83 @@ export default function AdminCreate() {
     } else {
       console.log("Successfully inserted categories:", data2);
     }
-  };
 
-  // Upload multiple images to Supabase
-  const uploadToSupabase = async () => {
-    if (images.length === 0) return alert("No files selected!");
+    //product created successfully, alert user
+    // Swal.fire({
+    //     title: `${formData.name} successfully created`,
+    //     icon: "success",
+    //     draggable: true
+    //   });
+    Swal.fire({
+        title: `${formData.name} successfully created`,
+        icon: "success",
+        html: `
+          <img src="${uploadedUrls[0]}" alt="Preview" style="width: 100px; border-radius: 5px;" />
+        `,
+        showCloseButton: true,
+        showCancelButton: true,
+        focusConfirm: false,
+        confirmButtonText: "Add another Product",
+        confirmButtonAriaLabel: "Add another Product",
+        cancelButtonText: "Back to Home screen",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Action when "Add another Product" button is clicked
+          console.log("User wants to add another product");
+          // For example, reset form fields:
+          reset()
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          // Action when "Back to Home screen" button is clicked
+          console.log("User is going back to home screen");
+          navigate("/admin/list"); // Redirect user to home screen
+        }
+      });
+      
+      
+    reset();
+};
+
+// Upload multiple images to Supabase
+const uploadToSupabase = async () => {
+    //if no images, do not have to upload
+    if (images.length === 0) {
+        return [];
+    }
 
     setUploading(true);
     const uploadedUrls = [];
-
+    
     for (const item of images) {
-      const file = item.file;
-      const fileName = `uploads/${Date.now()}_${file.name}`;
+        const file = item.file;
+        const fileName = `5sa3j8_1/${Date.now()}_${file.name}`;
 
-      const { data, error } = await supabase.storage
-        .from("EJsports") // Replace with your Supabase bucket name
-        .upload(fileName, file);
+        const { data, error } = await supabase.storage
+            .from("EJsports") // Replace with your Supabase bucket name
+            .upload(fileName, file);
 
-      if (error) {
-        alert("Upload failed: " + error.message);
-        setUploading(false);
-        return;
-      }
+        if (error) {
+            alert("Upload failed: " + error.message);
+            setUploading(false);
+            return [];
+        }
 
-      // Get public URL
-      const { data: publicUrl } = supabase.storage.from("EJsports").getPublicUrl(fileName);
-      uploadedUrls.push(publicUrl.publicUrl);
+        // Get public URL
+        const { data: publicUrl } = supabase.storage
+            .from("EJsports")
+            .getPublicUrl(fileName);
+
+        uploadedUrls.push(publicUrl.publicUrl);
     }
 
     setUploadedImages(uploadedUrls);
     setUploading(false);
-  };
+
+    return uploadedUrls; // Return uploaded URLs
+};
+
 
   const handleImageUpload = (newImages) => {
     setImages(newImages);
-  };
-
-
-  const handleUpload = (file) => {
-    console.log("Selected file:", file);
-    // Upload to Supabase or process the image
   };
 
   return (
@@ -212,84 +249,57 @@ export default function AdminCreate() {
               <Form.Control
                 type="text"
                 name="name"
-                className="form-input bg-transparent rounded-0 mb-3"
+                className="form-input bg-transparent rounded-0"
                 placeholder="Full Name"
-                value={formData.fullName}
+                value={formData.name}
                 onChange={updateFormField}
               />
+              {errors.name && <div className="text-danger">{errors.name}</div>}
+
               <Form.Select
                 type="select"
                 name="sport"
-                className="form-input bg-transparent rounded-0 mb-3"
+                className="form-input bg-transparent rounded-0 mt-3"
                 placeholder="Sport"
                 value={formData.sport}
                 onChange={updateFormField}
               >
-                {/* <option value="">Select a sport</option> */}
+                <option value="">Select a sport</option>
                 {sports.map((s, index) => (
                   <option key={index} value={s.id}>
                     {s.sport_name}
                   </option>
                 ))}
               </Form.Select>
+              {errors.sport && <div className="text-danger">{errors.sport}</div>}
 
               <Select
                 placeholder={"Categories"}
                 options={formattedOptions}
                 isMulti // Enables multi-select
                 onChange={handleCategoriesChange}
-                className="mb-3"
+                className="mt-3"
               />
+              {errors.categories && <div className="text-danger">{errors.categories}</div>}
 
-              <Form.Control
-                type="text"
-                name="contact"
-                className="form-input bg-transparent rounded-0 mb-3"
-                placeholder="Contact Number"
-                value={formData.contact}
-                onChange={updateFormField}
-              />
               <Form.Control
                 as="textarea"
                 name="description"
-                className="bg-transparent rounded-0 mb-3"
+                className="bg-transparent rounded-0 mt-3"
                 placeholder="Product Description"
                 style={{ height: "25vh" }}
                 value={formData.description}
                 onChange={updateFormField}
               />
-
-              {/* <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-              /> */}
-
-              {/* <div>
-            <input type="file" accept="image/*" onChange={handleFileChange} />
-            {src && (
-                <ReactCrop
-                src={src}
-                crop={crop}
-                onChange={(newCrop) => setCrop(newCrop)}
-                locked // Prevents users from changing the aspect ratio
-                />
-            )}
-            </div>
-             */}
               <div>
-      <h6 className="mt-3">Image Upload</h6>
-      <ImageUploader images={images} onImageUpload={handleImageUpload} />
+                <h6 className="mt-3">Image Upload</h6>
+                <ImageUploader
+                  images={images}
+                  onImageUpload={handleImageUpload}
+                />
+              </div>
 
-      {/* <h2>Uploaded Images:</h2>
-      <div style={{ display: "flex", gap: "10px" }}>
-        {images.map((image, index) => (
-          <img key={index} src={image.preview} alt={`Uploaded ${index}`} style={{ width: 100, borderRadius: 5 }} />
-        ))}
-      </div> */}
-    </div>
-
-              <div className="d-grid mt-4">
+              <div className="d-grid mt-3">
                 <Button
                   variant="dark"
                   className="rounded-0 py-2"
@@ -300,7 +310,6 @@ export default function AdminCreate() {
                 </Button>
               </div>
             </Form>
-            {/* <p class="text-center">Don't have an account? <a href="/register">Register here</a></p> */}
           </div>
         </div>
       </Container>
