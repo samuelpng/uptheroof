@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2'
 
 const AdminProductList = () => {
   const [products, setProducts] = useState([]);
@@ -34,7 +35,6 @@ const AdminProductList = () => {
       query = query.eq("products_categories.category_id", category);
     }
 
-    console.log('sport', sport)
     if (sport) {
       query = query.eq("sport_id", sport);
     }
@@ -46,31 +46,6 @@ const AdminProductList = () => {
       setProducts(data);
     }
   };
-
-  // const fetchProducts = async () => {
-  //   let query = supabase
-  //     .from("products")
-  //     .select(`
-  //       id, name, price, 
-  //       sports(id, name), 
-  //       products_categories(category_id, categories(id, name))
-  //     `)
-  //     .leftJoin("sports", "products.sport_id", "sports.id")
-  //     .leftJoin("products_categories", "products.id", "products_categories.product_id")
-  //     .leftJoin("categories", "products_categories.category_id", "categories.id");
-  
-  //   if (search) query = query.ilike("products.name", `%${search}%`);
-  //   if (category) query = query.eq("categories.id", category);
-  //   if (sport) query = query.eq("sports.id", sport);
-  
-  //   const { data, error } = await query;
-  //   if (error) {
-  //     console.error("Error fetching products:", error);
-  //   } else {
-  //     console.log("Fetched products:", data);
-  //     setProducts(data);
-  //   }
-  // };
   
   
 
@@ -95,13 +70,34 @@ const AdminProductList = () => {
     navigate(`/admin/edit/${product.id}`)
   };
 
-  const handleDelete = async (productId) => {
+  const deleteProduct = async (productId) => {
     const { error } = await supabase
       .from("products")
       .delete()
       .eq("id", productId);
     if (!error) fetchProducts(); // Refresh list after deletion
   };
+
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // delete on supabase
+        deleteProduct()
+        console.log("Deleting product with ID:", id);
+  
+        Swal.fire("Deleted!", "The product has been deleted.", "success");
+      }
+    });
+  };
+
 
   return (
     <div className="container">
@@ -178,7 +174,7 @@ const AdminProductList = () => {
               <tr key={product.id}>
                 <td>{index + 1}</td>
                 <td>{product.name}</td>
-                <td>{product.category}</td>
+                <td>{product.products_categories.map(item => item.categories.category_name).join(", ")}</td>
                 <td>{product.sports.sport_name}</td>
                 <td>{product.stock}</td>
                 <td>
