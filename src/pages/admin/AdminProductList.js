@@ -15,30 +15,58 @@ const AdminProductList = () => {
   const navigate = useNavigate()
 
   // Fetch products based on search & filters
-  const fetchProducts = async () => {
-    let query = supabase.from("products").select(`
-    id,
-    name,
-    description,
-    sport_id,
-    sports(sport_name),
-    products_categories!inner(categories!inner(id, category_name))!fk_category  
-  `);
+  // const fetchProducts = async () => {
+  //   let query = supabase.from("products").select(`
+  //   id,
+  //   name,
+  //   description,
+  //   sport_id,
+  //   sports(sport_name),
+  //   products_categories!inner(categories!inner(id, category_name))!fk_category  
+  // `);
     
 
+  //   if (search) {
+  //     query = query.ilike("name", `%${search}%`); // Case-insensitive search
+  //   }
+   
+  //   if (categories.length > 0) {
+  //     query = query.in("products_categories.category_id", category);
+  //   }
+
+  //   if (sport) {
+  //     query = query.eq("sport_id", sport);
+  //   }
+
+  //   const { data, error } = await query;
+  //   if (error) {
+  //     console.error("Error fetching products:", error);
+  //   } else {
+  //     setProducts(data);
+  //   }
+  // };
+  const fetchProducts = async () => {
+    let query = supabase.from("products").select(`
+      id,
+      name,
+      description,
+      sport_id,
+      sports(sport_name),
+      products_categories!inner(categories!inner(id, category_name))
+    `);
+  
     if (search) {
       query = query.ilike("name", `%${search}%`); // Case-insensitive search
     }
-   
-    //togo: add categories
-    if (category){ 
+
+    if (category) {
       query = query.eq("products_categories.category_id", category);
     }
-
+  
     if (sport) {
       query = query.eq("sport_id", sport);
     }
-
+  
     const { data, error } = await query;
     if (error) {
       console.error("Error fetching products:", error);
@@ -48,16 +76,18 @@ const AdminProductList = () => {
   };
   
   
+  
 
   // Fetch categories & sports for dropdowns
   const fetchFilters = async () => {
     const { data: categories } = await supabase.from("categories").select("*");
-    // const { data, error } = await supabase.from("categories").select("*");
 
     const { data: sports } = await supabase.from("sports").select("*");
-    console.log(categories)
-    console.log(sports)
-    setCategories(categories || []);
+    const formattedCategories = categories.map((category) => ({
+      id: category.id,
+      name: category.category_name
+    }))
+    setCategories(formattedCategories || []);
     setSports(sports || []);
   };
 
@@ -91,7 +121,6 @@ const AdminProductList = () => {
       if (result.isConfirmed) {
         // delete on supabase
         deleteProduct()
-        console.log("Deleting product with ID:", id);
   
         Swal.fire("Deleted!", "The product has been deleted.", "success");
       }
@@ -131,7 +160,7 @@ const AdminProductList = () => {
         >
           <option value="">All Categories</option>
           {categories.map((c) => (
-            <option key={c.id} value={c.name}>
+            <option key={c.id} value={c.id}>
               {c.name}
             </option>
           ))}
