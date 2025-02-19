@@ -25,6 +25,7 @@ import AdminCreate from './pages/admin/AdminCreateProduct';
 import AdminAddSport from './pages/admin/AdminAddSport';
 import AdminAddCategories from './pages/admin/AdminAddCategories';
 import AdminList from './pages/admin/AdminProductList';
+import AdminEditProduct from './pages/admin/AdminEditProduct';
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
               <Route path="create-sport" element={<AdminAddSport />} />
               <Route path="create-categories" element={<AdminAddCategories />} />
               <Route path="list" element={<AdminList />} />
+              <Route path="edit/:productId" element={<AdminEditProduct />} />
               {/* <Route path="orders" element={<Orders />} />
               <Route path="users" element={<Users />} /> */}
             </Route>

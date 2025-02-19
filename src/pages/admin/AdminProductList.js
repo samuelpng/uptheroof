@@ -15,7 +15,15 @@ const AdminProductList = () => {
 
   // Fetch products based on search & filters
   const fetchProducts = async () => {
-    let query = supabase.from("products").select("*");
+    let query = supabase.from("products").select(`
+    id,
+    name,
+    description,
+    sport_id,
+    sports(sport_name),
+    products_categories!inner(categories!inner(id, category_name))!fk_category  
+  `);
+    
 
     if (search) {
       query = query.ilike("name", `%${search}%`); // Case-insensitive search
@@ -84,7 +92,7 @@ const AdminProductList = () => {
   }, [search, category, sport]); // Re-fetch when filters change
 
   const handleEdit = (product) => {
-    console.log("Edit product:", product);
+    navigate(`/admin/edit/${product.id}`)
   };
 
   const handleDelete = async (productId) => {
@@ -161,7 +169,6 @@ const AdminProductList = () => {
               <th>Product Name</th>
               <th>Category</th>
               <th>Sport</th>
-              <th>Price</th>
               <th>Stock</th>
               <th>Actions</th>
             </tr>
@@ -172,8 +179,7 @@ const AdminProductList = () => {
                 <td>{index + 1}</td>
                 <td>{product.name}</td>
                 <td>{product.category}</td>
-                <td>{product.sport_id}</td>
-                <td>${product.price}</td>
+                <td>{product.sports.sport_name}</td>
                 <td>{product.stock}</td>
                 <td>
                   <button
