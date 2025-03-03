@@ -18,6 +18,20 @@ body {
 
 }
 
+.carousel-container {
+  width: 100%;
+  height:500px;
+  aspect-ratio: 16 / 9; 
+  overflow: hidden;
+}
+
+.carousel-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
 .card {
   border: 0px !important
 }
