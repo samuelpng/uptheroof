@@ -4,20 +4,24 @@ import { useNavigate } from 'react-router-dom';
 import { Container, Form, Button } from 'react-bootstrap';
 
 import '../App.css';
+import { useAuth } from '../contexts/AuthContext';
+import Swal from 'sweetalert2';
 
 export default function Register() {
 
-  const context = useContext(CustomerContext)
-  const navigate = useNavigate()
+  // const context = useContext(CustomerContext)
+  // const navigate = useNavigate()
+
+  const { signup } = useAuth(); // Get auth functions from context
+  const navigate = useNavigate();
+
 
   const [formData, setFormData] = useState({
     email: '',
     username: '',
-    first_name: '',
-    last_name: '',
+    full_name: '',
     password: '',
     confirm_password: '',
-    contact_number: ''
   })
 
   const [formError, setFormError] = useState([])
@@ -54,19 +58,19 @@ export default function Register() {
     if (!email) {
       errors.push('email')
     }
-    if (!formData.username || formData.username.length > 45) {
-      errors.push('username')
+    // if (!formData.username || formData.username.length > 45) {
+    //   errors.push('username')
+    // }
+    if (!formData.full_name || formData.full_name.length > 45) {
+      errors.push('full_name')
     }
-    if (!formData.first_name || formData.first_name.length > 45) {
-      errors.push('first_name')
-    }
-    if (!formData.last_name || formData.first_name.length > 45) {
-      errors.push('last_name')
-    }
-    let contact_number = validateContactNumber(formData.contact_number)
-    if (!contact_number) {
-      errors.push('contact_number');
-    }
+    // if (!formData.last_name || formData.first_name.length > 45) {
+    //   errors.push('last_name')
+    // }
+    // let contact_number = validateContactNumber(formData.contact_number)
+    // if (!contact_number) {
+    //   errors.push('contact_number');
+    // }
     if (!formData.password || formData.password.length < 8) {
       errors.push('password')
     }
@@ -80,16 +84,52 @@ export default function Register() {
 
   }
 
-  const registerCustomer = async () => {
-    const errors = formValidation()
-    if (errors.length) {
+  // const registerCustomer = async () => {
+  //   const errors = formValidation()
+  //   if (errors.length) {
+  //     return
+  //   }
+
+  //   await context.register(formData)
+  //   navigate('/login')
+
+  // }
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    const errors = formValidation();
+    if (errors.length){
       return
     }
+    console.log('heelo')
+    // setLoading(true);
 
-    await context.register(formData)
-    navigate('/login')
+    try {
+      await signup(formData.email, formData.password, formData.full_name);
+      
+      // Success Alert
+      Swal.fire({
+        title: "Success!",
+        text: "Your account has been created.",
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(() => {
+        navigate("/login"); // Redirect after success
+      });
 
-  }
+    } catch (err) {
+      Swal.fire({
+        title: "Error!",
+        text: err.message,
+        icon: "error",
+        confirmButtonText: "Try Again",
+      });
+    } finally {
+    }
+  };
+
+  
+  
 
   return (
     <Fragment>
@@ -103,20 +143,20 @@ export default function Register() {
                 placeholder="Email *" value={formData.email} onChange={updateFormField} />
                 {formError.includes('email') ? <Form.Text style={{color:"red"}}>Email is already taken</Form.Text> : ""}
 
-              <Form.Control type="text" name="username" className="form-input bg-transparent rounded-0 mt-3"
+              {/* <Form.Control type="text" name="username" className="form-input bg-transparent rounded-0 mt-3"
                 placeholder="Username *" value={formData.username} onChange={updateFormField} />
-                {formError.includes('username') ? <Form.Text style={{color:"red"}}>Username is already taken</Form.Text> : ""}
+                {formError.includes('username') ? <Form.Text style={{color:"red"}}>Username is already taken</Form.Text> : ""} */}
 
-              <Form.Control type="text" name="first_name" className="form-input bg-transparent rounded-0 mt-3"
-                placeholder="First Name *" value={formData.first_name} onChange={updateFormField} />
-                {formError.includes('first_name') ? <Form.Text style={{color:"red"}}>This field cannot be left blank</Form.Text> : ""}
+              <Form.Control type="text" name="full_name" className="form-input bg-transparent rounded-0 mt-3"
+                placeholder="Full Name *" value={formData.full_name} onChange={updateFormField} />
+                {formError.includes('full_name') ? <Form.Text style={{color:"red"}}>This field cannot be left blank</Form.Text> : ""}
 
-              <Form.Control type="text" name="last_name" className="form-input bg-transparent rounded-0 mt-3"
+              {/* <Form.Control type="text" name="last_name" className="form-input bg-transparent rounded-0 mt-3"
                 placeholder="Last Name *" value={formData.last_name} onChange={updateFormField} />
-                {formError.includes('last_name') ? <Form.Text style={{color:"red"}}>This field cannot be left blank</Form.Text> : ""}
+                {formError.includes('last_name') ? <Form.Text style={{color:"red"}}>This field cannot be left blank</Form.Text> : ""} */}
 
-              <Form.Control type="text" name="contact_number" className="form-input bg-transparent rounded-0 mt-3"
-                placeholder="Contact No." value={formData.contact_number} onChange={updateFormField} />
+              {/* <Form.Control type="text" name="contact_number" className="form-input bg-transparent rounded-0 mt-3"
+                placeholder="Contact No." value={formData.contact_number} onChange={updateFormField} /> */}
 
               <Form.Control type="password" name="password" className="form-input bg-transparent rounded-0 mt-3"
                 placeholder="Password *" value={formData.password} onChange={updateFormField} />
@@ -127,7 +167,7 @@ export default function Register() {
                 {formError.includes('confirm_password') ? <Form.Text style={{color:"red"}}>Passwords does not match</Form.Text> : ""}
 
               <div className="d-grid mt-4">
-                <Button variant="dark" className="rounded-0 py-2" type="button" onClick={registerCustomer}>CREATE ACCOUNT</Button>
+                <Button variant="dark" className="rounded-0 py-2" type="button" onClick={handleSignUp}>CREATE ACCOUNT</Button>
               </div>
             </Form>
           </div>

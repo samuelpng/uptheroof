@@ -69,12 +69,34 @@ const AdminProductList = () => {
     navigate(`/admin/edit/${product.id}`)
   };
 
-  const deleteProduct = async (productId) => {
-    const { error } = await supabase
-      .from("products")
-      .delete()
-      .eq("id", productId);
-    if (!error) fetchProducts(); // Refresh list after deletion
+  const deleteProduct = async (id) => {
+
+    // First, delete related records from `products_categories`
+    const { error: categoryError } = await supabase
+        .from('products_categories')
+        .delete()
+        .eq('product_id', id); // Assuming 'product_id' is the foreign key
+
+    if (categoryError) {
+        console.error("Error deleting product categories:", categoryError.message);
+        Swal.fire("Error", "Failed to delete product categories.", "error");
+        return;
+    }
+
+    // Now, delete the product itself
+    const { error: productError } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', id);
+
+    if (productError) {
+        console.error("Error deleting product:", productError.message);
+        Swal.fire("Error", "Failed to delete product.", "error");
+    } else {
+      Swal.fire("Deleted!", "The product has been deleted.", "success");
+      fetchProducts()
+    }
+
   };
 
   const handleDelete = (id) => {
@@ -89,12 +111,13 @@ const AdminProductList = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         // delete on supabase
-        deleteProduct()
+        deleteProduct(id)
   
-        Swal.fire("Deleted!", "The product has been deleted.", "success");
+        
       }
     });
   };
+  
 
 
   return (

@@ -46,6 +46,30 @@ export default function LandingPage() {
     }
   };
 
+  // <div className="new-arrivals p-5 mt-3">
+  //       <h1 className="text-center" style={{fontFamily:"Righteous"}}>LATEST ARRIVALS</h1>
+  //       <div >
+  //         <Carousel responsive={responsive}>
+  //           {newProducts ?
+  //             newProducts.map(p => {
+  //               return (
+  //                 <Card style={{ cursor: "pointer", textDecoration: 'none', color: 'black' }} as={Link} to={`/products/${p.id}`} className="p-3">
+  //                 <Card.Img variant="top" src={p.image_url} className="landing-card-img" />
+  //                 <Card.Body>
+  //                   <Card.Title>{p.name}</Card.Title>
+  //                   <Card.Text>
+  //                     {p.surface.surface} Boots <br />
+  //                     {/* S$ {(p.cost / 100).toFixed(2)} */}
+  //                   </Card.Text>
+  //                 </Card.Body>
+  //               </Card>
+  //               )
+  //             })
+  //             : null}
+  //         </Carousel>
+  //       </div>
+  //     </div>
+
 
 
 
@@ -56,29 +80,7 @@ export default function LandingPage() {
         <LandingCarousel />
       </div>
 
-      <div className="new-arrivals p-5 mt-3">
-        <h1 className="text-center" style={{fontFamily:"Righteous"}}>LATEST ARRIVALS</h1>
-        <div >
-          <Carousel responsive={responsive}>
-            {newProducts ?
-              newProducts.map(p => {
-                return (
-                  <Card style={{ cursor: "pointer", textDecoration: 'none', color: 'black' }} as={Link} to={`/products/${p.id}`} className="p-3">
-                  <Card.Img variant="top" src={p.image_url} className="landing-card-img" />
-                  <Card.Body>
-                    <Card.Title>{p.name}</Card.Title>
-                    <Card.Text>
-                      {p.surface.surface} Boots <br />
-                      {/* S$ {(p.cost / 100).toFixed(2)} */}
-                    </Card.Text>
-                  </Card.Body>
-                </Card>
-                )
-              })
-              : null}
-          </Carousel>
-        </div>
-      </div>
+      
 
       <div>
         <h1 className="text-center my-3" style={{fontFamily:"Righteous"}}>SHOP BY SPORT</h1>

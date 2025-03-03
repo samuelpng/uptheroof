@@ -39,6 +39,7 @@ function App() {
           <ProductsProvider>
             <SportsProvider>
               <CategoriesProvider>
+                <AuthProvider>
                 <NavBar />
 
                 <Routes>
@@ -71,6 +72,7 @@ function App() {
                   </Route>
                   {/* </AuthProvider> */}
                 </Routes>
+                </AuthProvider>
               </CategoriesProvider>
             </SportsProvider>
           </ProductsProvider>
