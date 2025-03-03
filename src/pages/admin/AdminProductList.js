@@ -14,37 +14,6 @@ const AdminProductList = () => {
 
   const navigate = useNavigate()
 
-  // Fetch products based on search & filters
-  // const fetchProducts = async () => {
-  //   let query = supabase.from("products").select(`
-  //   id,
-  //   name,
-  //   description,
-  //   sport_id,
-  //   sports(sport_name),
-  //   products_categories!inner(categories!inner(id, category_name))!fk_category  
-  // `);
-    
-
-  //   if (search) {
-  //     query = query.ilike("name", `%${search}%`); // Case-insensitive search
-  //   }
-   
-  //   if (categories.length > 0) {
-  //     query = query.in("products_categories.category_id", category);
-  //   }
-
-  //   if (sport) {
-  //     query = query.eq("sport_id", sport);
-  //   }
-
-  //   const { data, error } = await query;
-  //   if (error) {
-  //     console.error("Error fetching products:", error);
-  //   } else {
-  //     setProducts(data);
-  //   }
-  // };
   const fetchProducts = async () => {
     let query = supabase.from("products").select(`
       id,

@@ -1,12 +1,20 @@
 
 import { useContext, useEffect, useState, Fragment } from 'react';
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import CategoriesContext from '../contexts/CategoriesContext';
 import CustomerContext from '../contexts/CustomerContext';
+import SportsContext from '../contexts/SportsContext';
+import { supabase } from "../supabaseClient";
 
 export default function NavBar() {
 
-    const [loggedIn, setLoggedIn] = useState(false)
+    const { sports, sportsLoading, sportsError } = useContext(SportsContext);
+    const { categories, categoriesLoading, categoriesError } = useContext(CategoriesContext);
 
+
+    const [loggedIn, setLoggedIn] = useState(false)
+    // const [sports, setSports] = useState([])
+    // const [categories, setCategories] = useState([])
 
     const context = useContext(CustomerContext)
     const logout = async () => {
@@ -14,13 +22,32 @@ export default function NavBar() {
     }
 
     useEffect(() => {
+
         if (localStorage.getItem("accessToken")) {
+            // fetchCategories()
             setLoggedIn(true)
         } else {
             setLoggedIn(false)
         }
     }, [])
 
+    // Fetch categories & sports for dropdowns
+//   const fetchCategories = async () => {
+//     const { data: categories } = await supabase.from("categories").select("*");
+
+//     const { data: sports } = await supabase.from("sports").select("*");
+//     const formattedCategories = categories.map((category) => ({
+//       id: category.id,
+//       name: category.category_name
+//     }))
+//     console.log(sports)
+//     setCategories(formattedCategories || []);
+//     // setSports(sports || []);
+//   };
+    // if (sportsLoading || categoriesLoading){
+    //     return;
+    // }
+    
     return (
         <Fragment>
             <Navbar bg="light" expand="lg" sticky="top" className="lg-navbar">
@@ -29,7 +56,7 @@ export default function NavBar() {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
-                            <Nav.Link href="/shop/room" className="me-3">Shop All</Nav.Link>
+                            <Nav.Link href="/shop/room" className="me-3">Categories</Nav.Link>
                             <NavDropdown title="Shop by Sport" id="basic-nav-dropdown">
                                 <NavDropdown.Item href="/shop/room" className="dropdown-submenu">
                                     <span className="dropdown-item-text">All</span>
@@ -37,22 +64,30 @@ export default function NavBar() {
                                 <NavDropdown.Item className="dropdown-submenu">
                                     <span className="dropdown-item-text">Sports</span>
                                     <ul className="dropdown-menu">
-                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/athletics";}}>Atheltics</NavDropdown.Item></li>
-                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/badminton";}}>Badminton</NavDropdown.Item></li>
-                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/basketball"}}>Basektball</NavDropdown.Item></li>
-                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/softball"}}>Softball</NavDropdown.Item></li>
-                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/netball"}}>Netball</NavDropdown.Item></li>
-                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/cricket"}}>Cricket</NavDropdown.Item></li>
-                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/frisbee"}}>Frisbee</NavDropdown.Item></li>
-                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/golf"}}>Golf</NavDropdown.Item></li>
-                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/gymnastics"}}>Gymnastics</NavDropdown.Item></li>
-                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/handball"}}>Handball</NavDropdown.Item></li>
-                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/hockey-floorball"}}>Hockey & Floorball</NavDropdown.Item></li>
-                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/rugby"}}>Rugby</NavDropdown.Item></li>
-                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/soccer"}}>Soccer</NavDropdown.Item></li>
-                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/swimming"}}>Swimming / Water Sports</NavDropdown.Item></li>
-                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/table-tennis"}}>Table Tennis</NavDropdown.Item></li>
-                                    <li><NavDropdown.Item onClick={() => {window.location.href = "/shop/volleyball"}}>Volleyball</NavDropdown.Item></li>
+                                        { !sportsLoading && sports &&
+                                            sports.map(sport => (
+                                                <li key={sport.id}>
+                                                    <NavDropdown.Item onClick={() => { window.location.href = `/shop/${sport.id}`; }}>
+                                                        {sport.sport_name}
+                                                    </NavDropdown.Item>
+                                                </li>
+                                            ))
+                                        }
+                                    </ul>
+                                </NavDropdown.Item>
+                                <NavDropdown.Item className="dropdown-submenu">
+                                    <span className="dropdown-item-text">Categories</span>
+                                    <ul className="dropdown-menu">
+                                        { !categoriesLoading && categories &&
+                                            categories.map(category => (
+                                                <li key={category.id}>
+                                                    <NavDropdown.Item onClick={() => { window.location.href = `/shop/${category.id}`; }}>
+                                                        {category.category_name}
+                                                    </NavDropdown.Item>
+                                                </li>
+                                            ))
+                                        }
+
                                     </ul>
                                 </NavDropdown.Item>
                             </NavDropdown>
