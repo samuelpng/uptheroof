@@ -1,35 +1,30 @@
 
 import { useContext, useEffect, useState, Fragment } from 'react';
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import { useAuth } from '../contexts/AuthContext';
 import CategoriesContext from '../contexts/CategoriesContext';
-import CustomerContext from '../contexts/CustomerContext';
 import SportsContext from '../contexts/SportsContext';
-import { supabase } from "../supabaseClient";
 
 export default function NavBar() {
 
     const { sports, sportsLoading, sportsError } = useContext(SportsContext);
     const { categories, categoriesLoading, categoriesError } = useContext(CategoriesContext);
 
-
     const [loggedIn, setLoggedIn] = useState(false)
-    // const [sports, setSports] = useState([])
-    // const [categories, setCategories] = useState([])
 
-    const context = useContext(CustomerContext)
-    const logout = async () => {
-        await context.logout()
+    const { user, logout, isLoading } = useAuth();
+    const handleLogout = async () => {
+        await logout()
     }
 
     useEffect(() => {
-
-        if (localStorage.getItem("accessToken")) {
-            // fetchCategories()
-            setLoggedIn(true)
+        console.log("user", user);
+        if (user) {
+          setLoggedIn(true);
         } else {
-            setLoggedIn(false)
+          setLoggedIn(false);
         }
-    }, [])
+      }, [user]); 
 
     // Fetch categories & sports for dropdowns
 //   const fetchCategories = async () => {
@@ -47,6 +42,7 @@ export default function NavBar() {
     // if (sportsLoading || categoriesLoading){
     //     return;
     // }
+
     
     return (
         <Fragment>
@@ -94,7 +90,7 @@ export default function NavBar() {
                         </Nav>
                         <Nav className="ms-auto">
                             {loggedIn ?
-                                <Nav.Link onClick={logout}>Log Out</Nav.Link>
+                                <Nav.Link onClick={handleLogout}>Log Out</Nav.Link>
                                 :
                                 <Nav.Link href="/login">Log In</Nav.Link>
                             }

@@ -5,41 +5,48 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); 
 
   useEffect(() => {
     const fetchAuthState = async () => {
-      // Restore session on page load
+      setIsLoading(true);
       const { data, error } = await supabase.auth.getSession();
-      if (data.session) {
+      if (data?.session) {
         setUser(data.session.user);
       } else {
-        // If no session, get the user (useful for initial load)
-        const { data } = await supabase.auth.getUser();
-        setUser(data.user);
+        setUser(null);
       }
+      setIsLoading(false);
     };
-  
+
     fetchAuthState();
-  
-    // Listen for auth state changes
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user || null);
-    });
-  
-    return () => listener?.subscription.unsubscribe();
-  }, []);
-  
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === 'SIGNED_IN') {
+          setUser(session.user);
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+        }
+      }
+    );
+
+    return () => {
+      authListener?.subscription?.unsubscribe();
+    };
+  },[]);
 
   const login = async (email, password) => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  
+
     if (error) {
-      throw error; // Handle the error (e.g., show an alert)
+      console.error("Login error:", error.message);
+      throw error; // Handle the error properly in UI
     }
-  
-    setUser(data?.user); // Set the user state with the authenticated user
+
+    console.log("User logged in:", data.session?.user);
+    setUser(data.session?.user); // Correct way to set user
   };
-  
 
   const signup = async (email, password, fullName) => {
     const { data, error } = await supabase.auth.signUp({
@@ -47,15 +54,17 @@ export const AuthProvider = ({ children }) => {
       password,
       options: { data: { full_name: fullName } }, // Stores in user_metadata
     });
-  
+
     if (error) throw error;
-  
-    // Insert into profiles table
-    const { error: profileError } = await supabase
-      .from("profiles")
-      .insert([{ id: data.user.id, full_name: fullName, email: email }]);
-  
-    if (profileError) throw profileError;
+
+    if (data.user) {
+      // Insert into profiles table
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .insert([{ id: data.user.id, full_name: fullName, email }]);
+
+      if (profileError) throw profileError;
+    }
   };
 
   const logout = async () => {
@@ -66,16 +75,13 @@ export const AuthProvider = ({ children }) => {
   const signInWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: {
-        // redirectTo: window.location.origin, // Adjust if needed
-      },
     });
-  
+
     if (error) throw error;
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, signInWithGoogle }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, signInWithGoogle, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

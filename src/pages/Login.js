@@ -4,9 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { Container, Form, Button } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { supabase } from "../supabaseClient";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Login() {
-  const context = useContext(CustomerContext);
+  const { login } = useAuth(); // Get auth functions from context
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
 
@@ -17,11 +18,11 @@ export default function Login() {
     });
   };
 
-  const login = async () => {
+  const handleLogin = async () => {
     let email = formData.email;
     let password = formData.password;
 
-    let response = await context.login(email, password);
+    let response = await login(email, password);
     console.log("login =>", response);
 
     if (response?.error) {
@@ -112,7 +113,7 @@ export default function Login() {
               />
 
               <div className="d-grid mt-4">
-                <Button variant="dark" className="rounded-0 py-2" type="button" onClick={login}>
+                <Button variant="dark" className="rounded-0 py-2" type="button" onClick={handleLogin}>
                   SIGN IN
                 </Button>
               </div>

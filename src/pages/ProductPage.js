@@ -3,12 +3,15 @@ import { Carousel, Container, Button, Accordion, Placeholder, Card } from 'react
 import { useParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Swal from 'sweetalert2';
+import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../supabaseClient';
 
 export default function ProductPage() {
     const { productId } = useParams();
     const [product, setProduct] = useState(null);
     const [similarProducts, setSimilarProducts] = useState([]);
+    const { user } = useAuth();
 
     const getProductById = async (productId) => {
         const { data, error } = await supabase
@@ -40,35 +43,35 @@ export default function ProductPage() {
     }, [productId]);
 
     const addToCart = async () => {
-        // check if user is logged in
-        // if (localStorage.getItem("accessToken")) {
-
-        //     const customerData = JSON.parse(localStorage.getItem("customer"))
-        //     let customerId = customerData.id
-        //     let variantId = selectedVariant
-
-        //     try {
-        //         console.log(BASE_URL + `cart/${variantId}/add`)
-        //         let response = await axios.post(BASE_URL + `cart/${variantId}/add`,
-        //             {
-        //                 customer_id: customerId,
-        //                 variant_id: variantId
-        //             },
-        //             {
-        //                 headers: {
-        //                     authorization: `Bearer ${localStorage.getItem("accessToken")}`
-        //                 },
-        //             })
-        //         toast.success('Successfully added to cart')
-        //         return true
-        //     } catch (error) {
-        //         toast.error("Maximum items in cart exceeded")
-        //         return false
-        //     }
-        // } else {
-        //     toast.error('You have to log in to add to cart')
-        // }
-    }
+        // Check if user is logged in
+        if (user) {
+          const { data, error } = await supabase
+            .from("profiles_products")
+            .insert({
+              profile_id: user.id,
+              product_id: productId
+            });
+      
+          if (!error) {
+            Swal.fire({
+              title: 'Added to Cart',
+              text: `${product.product_name} was successfully added to the cart!`,
+              icon: 'success',
+              confirmButtonText: 'OK'
+            });
+          } else {
+            Swal.fire({
+              title: 'Oops!',
+              text: error || 'There was a problem adding your product to the cart.',
+              icon: 'error',
+              confirmButtonText: 'OK'
+            });
+          }
+        } else {
+          toast.error('You have to log in to add to cart');
+        }
+      };
+      
 
     if (!product) {
         return (
