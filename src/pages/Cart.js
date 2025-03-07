@@ -1,187 +1,199 @@
-import { Fragment, useContext, useState, useEffect } from "react";
-import '../App.css';
-import CustomerContext from "../contexts/CustomerContext";
-import { Container, CloseButton, Form, Button } from "react-bootstrap";
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
-import CardPlaceholder from "../components/CardPlaceholer";
+import React, { Fragment, useEffect, useState, useContext } from "react";
+import { Container, Button, CloseButton } from "react-bootstrap";
 import { toast } from "react-toastify";
-import userEvent from "@testing-library/user-event";
+import { supabase } from "../supabaseClient"; 
+// import CustomerContext from "../contexts/CustomerContext"; 
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Cart() {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
 
-  const [loggedIn, setLoggedIn] = useState(false)
-  const [cartItems, setCartItems] = useState([])
-  const [quantity, setQuantity] = useState({})
-  const [total, setTotal] = useState([])
-  // const [selectedVariant, setSelectedVariant] = useState({})
-
-  const context = useContext(CustomerContext)
-  const customerData = JSON.parse(localStorage.getItem("customer"))
-
+  // const context = useContext(CustomerContext);
+  const { user } = useAuth();
 
   useEffect(() => {
-
-    if (localStorage.getItem('accessToken')) {
-      setLoggedIn(true)
+    if (user) {
+      setLoggedIn(true);
+      getCartItems();
     } else {
-      setLoggedIn(false)
+      setLoggedIn(false);
     }
+  }, [user]);
 
-    const auth = context.checkIfAuth()
-
-    if (auth) {
-      getCartItems()
-    } 
-    // else {
-
-    //   toast.error("You need to log in to access your shopping cart")
-    // }
-  }, [])
-
+  // Fetch cart items + related product details
   const getCartItems = async () => {
-    const response = await context.getCartItems()
-    setCartItems(response)
-    const qty = {}
-    for (let r of response) {
-      qty[r.variant.id] = r.quantity
+    const { data, error } = await supabase
+      .from("profiles_products")
+      .select(`*, products(*)`)
+      .eq("profile_id", user.id);
+
+    if (error) {
+      console.error(error);
+      return;
     }
-    setQuantity(qty)
 
-    const subtotal = []
-    for (let r of response) {
-      subtotal.push(r.variant.product.cost * r.quantity)
-    }
-    const total = subtotal.reduce((partialSum, a) => partialSum + a, 0)
-    setTotal(total)
+    setCartItems(data);
+  };
 
-  }
+  // Update local notes state as user types
+  const handleNotesChange = (productId, newNotes) => {
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.product_id === productId
+          ? { ...item, notes: newNotes }
+          : item
+      )
+    );
+  };
 
+  // Save notes to Supabase when user clicks 'Save'
+  const saveNotes = async (productId) => {
+    // Find the item whose notes we want to save
+    const itemToSave = cartItems.find(
+      (item) => item.product_id === productId
+    );
+    if (!itemToSave) return;
 
-  const updateCartItem = async (e) => {
-    setQuantity({
-      ...quantity,
-      [e.target.name]: e.target.value
-    })
-    const variantId = e.target.name
-    const customerId = customerData.id
-    // const qty = quantity[variantId]
-    const qty = e.target.value
+    // Update notes in the database
+    const { error } = await supabase
+      .from("profiles_products")
+      .update({ notes: itemToSave.notes })
+      .eq("profile_id", user.id)
+      .eq("product_id", productId);
 
-    let response = await context.updateCartItem(customerId, variantId, qty)
-    if (response) {
-      toast.success('Cart updated')
-      await getCartItems()
-      return true
+    if (error) {
+      toast.error("Failed to update notes.");
+      console.error(error);
     } else {
-      toast.error('Something went wrong')
-      return false
+      toast.success("Notes updated successfully!");
+      // Optionally, you can refresh the cart or leave it as-is:
+      // await getCartItems();
     }
-  }
+  };
 
-  const deleteCartItem = async (variantId) => {
-    const customerId = customerData.id
-    let response = await context.deleteCartItem(customerId, variantId)
-    if (response) {
-      toast.success('Product removed from cart')
-      await getCartItems()
-      return true
+  // Example deleteCartItem function
+  const deleteCartItem = async (productId) => {
+    const { error: categoryError } = await supabase
+      .from('profiles_products')
+      .delete()
+      .eq('product_id', productId)
+      .eq('profile_id', user.id);
+
+    if (categoryError) {
+      console.error('Error deleting:', categoryError);
     } else {
-      toast.error('Something went wrong')
-      return false
+      console.log('Successfully deleted');
     }
-  }
 
+  };
+
+  // Example checkout / inquire function
   const checkout = async () => {
-    let response = await context.checkout()
-    console.log("cart checkout", response)
-  }
+    
+  };
 
   return (
     <Fragment>
       <Container>
         <div className="row">
-          <h1 className="px-5 text-center mt-4" style={{fontFamily:"Righteous"}}>My Cart</h1>
-          {loggedIn ?
-
+          <h1 className="px-5 text-center mt-4" style={{ fontFamily: "Righteous" }}>
+            My Cart
+          </h1>
+          <h5
+            className="px-5 text-center mt-4"
+            style={{ fontFamily: "Righteous" }}
+          >
+            Review the items you’re interested in and submit an inquiry for pricing or more details.
+          </h5>
+          {loggedIn ? (
             <Fragment>
-              {cartItems && cartItems.length !== 0 ?
+              {cartItems && cartItems.length !== 0 ? (
                 <div className="row mt-3 px-4 px-lg-5">
                   <div className="col-12 col-lg-7">
-
                     {cartItems.map((c) => (
-
-                      <div className="d-flex cartItem-container mb-3">
+                      <div className="d-flex cartItem-container mb-3" key={c.id}>
                         <div className="col-5">
-                          <img src={c.variant.product.image_url} style={{ width: "100%" }} />
+                          <img
+                            src={c.products.image_url}
+                            style={{ width: "100%" }}
+                            alt={c.products.name}
+                          />
                         </div>
                         <div className="col-6 ps-3 pt-2 pt-md-3">
-                          <h4 className="cartItemName pe-1">{c.variant.product.name}</h4>
-                          {/* <div className="mt-1">S$ {(c.variant.product.cost / 100).toFixed(2)}</div> */}
-                          <div>Size: {c.variant.size.size}</div>
-                          {/* <div className="mt-2">
-                            {c.quantity}
-                          </div> */}
-                          <CloseButton style={{ position: "absolute", top: "10px", right: "10px" }} onClick={() => { deleteCartItem(c.variant.id) }} />
-                          <Form.Select className="cart-select py-0 rounded-0" aria-label="Default select example" name={c.variant.id} onChange={updateCartItem} value={quantity[c.variant.id]}>
-                            {parseInt(c.variant.stock) <= 10 ?
-                              Array.from({ length: parseInt(c.variant.stock) }).map((a, b) => (
-                                <option value={b + 1} className="qty-box">{b + 1}</option>
-                              )) :
-                              Array.from({ length: 10 }).map((a, b) => (
-                                <option className="qty-box">{b + 1}</option>
-                              ))
+                          <h4 className="cartItemName pe-1">{c.products.name}</h4>
+
+                          {/* Always editable textarea for notes */}
+                          <div>Additional Notes</div>
+                          <textarea
+                            value={c.notes || ""}
+                            onChange={(e) =>
+                              handleNotesChange(c.product_id, e.target.value)
                             }
-                          </Form.Select>
-                          {parseInt(c.variant.stock) <= 5 ?
-                            <div className="cart-stock">Only {c.variant.stock} left</div>
-                            : null}
+                            placeholder="Add notes here..."
+                            rows={4}
+                            style={{ width: "100%" }}
+                          />
+
+                          {/* Save button to persist notes */}
+                          <Button
+                            variant="primary"
+                            className="mt-2 me-2"
+                            onClick={() => saveNotes(c.product_id)}
+                          >
+                            Save
+                          </Button>
+
+                          <CloseButton
+                            style={{ position: "absolute", top: "10px", right: "10px" }}
+                            onClick={() => deleteCartItem(c.product_id)}
+                          />
                         </div>
                       </div>
                     ))}
-
                   </div>
-                  <div className="col-12 col-lg-5 pt-4 ps-4" >
-
+                  <div className="col-12 col-lg-5 pt-4 ps-4">
                     <h4 className="mb-5">Order Summary</h4>
                     <div className="cartItem-container" style={{ border: "none" }}>
-                      {
-                        cartItems.map(c => (
-                          <Fragment>
-                            <div style={{ display: "flex", justifyContent: "space-between" }}>
-                              <div>{c.variant.product.name}</div>
-                              {/* <div>S${(c.variant.product.cost * c.quantity / 100).toFixed(2)}</div> */}
-                            </div>
-                            <p className="mb-3">x{c.quantity}</p>
-                          </Fragment>
-                        ))
-                      }
-                    
-                    <hr />
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <div>Total</div>
-                      {/* <div>S$ {(total / 100).toFixed(2)}</div> */}
-                    </div>
+                      {cartItems.map((c) => (
+                        <Fragment key={c.product_id}>
+                          <div style={{ display: "flex", justifyContent: "space-between" }}>
+                            <div>{c.products.name}</div>
+                          </div>
+                          <p className="mb-3">x{c.quantity}</p>
+                        </Fragment>
+                      ))}
+                      <hr />
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <div>Total</div>
+                        {/* If you track price, display it here */}
+                      </div>
                     </div>
                     <div className="d-grid my-4 mx-2">
-                      <Button variant="dark" className="rounded-0 py-2" type="button" onClick={checkout} >ENQUIRE</Button>
+                      <Button
+                        variant="dark"
+                        className="rounded-0 py-2"
+                        type="button"
+                        onClick={checkout}
+                      >
+                        ENQUIRE
+                      </Button>
                     </div>
-
-
-
                   </div>
                 </div>
-
-                :
-                <p className="py-4 lead text-center">There are no items in your shopping cart</p>
-              }
-
+              ) : (
+                <p className="py-4 lead text-center">
+                  There are no items in your shopping cart
+                </p>
+              )}
             </Fragment>
-
-            :
+          ) : (
             <div>
-              <p className="py-4 lead text-center">Please log in to view or add items to your shopping cart.</p>
+              <p className="py-4 lead text-center">
+                Please log in to view or add items to your shopping cart.
+              </p>
             </div>
-          }
+          )}
         </div>
       </Container>
     </Fragment>
