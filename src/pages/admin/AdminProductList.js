@@ -75,8 +75,8 @@ const AdminProductList = () => {
     const { error: categoryError } = await supabase
         .from('products_categories')
         .delete()
-        .eq('product_id', id); // Assuming 'product_id' is the foreign key
-
+        .eq('product_id', id); 
+        
     if (categoryError) {
         console.error("Error deleting product categories:", categoryError.message);
         Swal.fire("Error", "Failed to delete product categories.", "error");
