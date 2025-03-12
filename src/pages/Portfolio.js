@@ -16,16 +16,16 @@ const projects = [
     title: "Basketball Hoops",
     description: "A real-time tracking system for seamless operations.",
     images: [
-      "/images/hoops1.jpg",
-      "/images/hoops2.jpg",
+      "/images/hoops1.png",
+      "/images/hoops2.png",
     ]
   },
   {
     title: "Acrylic Coating",
     description: "AI-powered analytics for smarter decision-making.",
     images: [
-      "/images/acryliccoating1",
-      "/images/acryliccoating2",
+      "/images/acryliccoating1.png",
+      "/images/acryliccoating2.jpg",
     ]
   }
 ];

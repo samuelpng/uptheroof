@@ -1,7 +1,8 @@
 
 import { useContext, useEffect, useState, Fragment } from 'react';
-import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import { Container, Form, FormControl, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { useAuth } from '../contexts/AuthContext';
+import { FaUser, FaShoppingCart } from "react-icons/fa";
 import CategoriesContext from '../contexts/CategoriesContext';
 import SportsContext from '../contexts/SportsContext';
 
@@ -29,9 +30,29 @@ export default function NavBar() {
     
     return (
         <Fragment>
-            <Navbar bg="light" expand="lg" sticky="top" className="lg-navbar">
+            <div className="top-bar">
+    <div className="top-bar-container">
+        {/* Logo */}
+        <a href="/" className="logo">
+            <img src="/images/sports-engineering-logo.png" alt="Company Logo" />
+        </a>
+
+        {/* Search Bar (Moves below logo on mobile) */}
+        <form className="search-bar">
+            <input type="text" placeholder="Search our catalog" />
+        </form>
+
+        {/* Account & Cart Icons */}
+        <div className="icons">
+            <a href="/account" className="icon">👤</a>
+            <a href="/cart" className="icon">🛒 <span className="cart-count">0</span></a>
+        </div>
+    </div>
+</div>
+
+            <Navbar expand="lg" sticky="top" className="lg-navbar orange-navbar">
                 <Container>
-                    <Navbar.Brand href="/" className="ms-2"><img src="/images/sports-engineering-logo.png" alt="Company Logo" style={{ height: "40px" }}></img></Navbar.Brand>
+                    {/* <Navbar.Brand href="/" className="ms-2"><img src="/images/sports-engineering-logo.png" alt="Company Logo" style={{ height: "40px" }}></img></Navbar.Brand> */}
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
