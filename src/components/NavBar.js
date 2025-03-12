@@ -26,23 +26,6 @@ export default function NavBar() {
         }
       }, [user]); 
 
-    // Fetch categories & sports for dropdowns
-//   const fetchCategories = async () => {
-//     const { data: categories } = await supabase.from("categories").select("*");
-
-//     const { data: sports } = await supabase.from("sports").select("*");
-//     const formattedCategories = categories.map((category) => ({
-//       id: category.id,
-//       name: category.category_name
-//     }))
-//     console.log(sports)
-//     setCategories(formattedCategories || []);
-//     // setSports(sports || []);
-//   };
-    // if (sportsLoading || categoriesLoading){
-    //     return;
-    // }
-
     
     return (
         <Fragment>
@@ -94,6 +77,7 @@ export default function NavBar() {
                                 :
                                 <Nav.Link href="/login">Log In</Nav.Link>
                             }
+                            <Nav.Link href="/portfolio">Portfolio</Nav.Link>
                             <Nav.Link href="/contact-us">Contact Us</Nav.Link>
                             <Nav.Link href="/about-us">About Us</Nav.Link>
                             <Nav.Link href="/cart">Cart</Nav.Link>

@@ -30,6 +30,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { SportsProvider } from "./contexts/SportsContext";
 import { CategoriesProvider } from "./contexts/CategoriesContext";
 import ProductPage from "./pages/ProductPage";
+import Portfolio from "./pages/Portfolio";
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/stripe" element={<Stripe />} />
                   <Route path="/orders" element={<Orders />} />
+                  <Route path="portfolio" element={<Portfolio/>}/>
                   {/* <AuthProvider> */}
                   <Route path="/admin/*">
                     {/* <Route path="dashboard" element={<Dashboard />} /> */}
