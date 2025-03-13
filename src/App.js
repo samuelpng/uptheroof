@@ -31,6 +31,7 @@ import { SportsProvider } from "./contexts/SportsContext";
 import { CategoriesProvider } from "./contexts/CategoriesContext";
 import ProductPage from "./pages/ProductPage";
 import Portfolio from "./pages/Portfolio";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -41,39 +42,53 @@ function App() {
             <SportsProvider>
               <CategoriesProvider>
                 <AuthProvider>
-                <NavBar />
+                  <div className="page-container">
+                    <div className="content pb-3">
+                      <NavBar />
 
-                <Routes>
-                  <Route path="/" element={<LandingPage />} />
-                  <Route path="/shop/:brand_id" element={<ProductsListing />} />
-                  <Route path="/products/:productId" element={<ProductPage />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/cart" element={<Cart />} />
-                  <Route path="/about-us" element={<AboutUs />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/stripe" element={<Stripe />} />
-                  <Route path="/orders" element={<Orders />} />
-                  <Route path="portfolio" element={<Portfolio/>}/>
-                  {/* <AuthProvider> */}
-                  <Route path="/admin/*">
-                    {/* <Route path="dashboard" element={<Dashboard />} /> */}
-                    <Route path="create" element={<AdminCreate />} />
-                    <Route path="create-sport" element={<AdminAddSport />} />
-                    <Route
-                      path="create-categories"
-                      element={<AdminAddCategories />}
-                    />
-                    <Route path="list" element={<AdminList />} />
-                    <Route
-                      path="edit/:productId"
-                      element={<AdminEditProduct />}
-                    />
-                    {/* <Route path="orders" element={<Orders />} />
+                      <Routes>
+                        <Route path="/" element={<LandingPage />} />
+                        <Route
+                          path="/shop/:brand_id"
+                          element={<ProductsListing />}
+                        />
+                        <Route
+                          path="/products/:productId"
+                          element={<ProductPage />}
+                        />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/cart" element={<Cart />} />
+                        <Route path="/about-us" element={<AboutUs />} />
+                        <Route path="/profile" element={<Profile />} />
+                        <Route path="/stripe" element={<Stripe />} />
+                        <Route path="/orders" element={<Orders />} />
+                        <Route path="portfolio" element={<Portfolio />} />
+                        {/* <AuthProvider> */}
+                        <Route path="/admin/*">
+                          {/* <Route path="dashboard" element={<Dashboard />} /> */}
+                          <Route path="create" element={<AdminCreate />} />
+                          <Route
+                            path="create-sport"
+                            element={<AdminAddSport />}
+                          />
+                          <Route
+                            path="create-categories"
+                            element={<AdminAddCategories />}
+                          />
+                          <Route path="list" element={<AdminList />} />
+                          <Route
+                            path="edit/:productId"
+                            element={<AdminEditProduct />}
+                          />
+                          {/* <Route path="orders" element={<Orders />} />
                 <Route path="users" element={<Users />} /> */}
-                  </Route>
-                  {/* </AuthProvider> */}
-                </Routes>
+                        </Route>
+                        {/* </AuthProvider> */}
+                      </Routes>
+                    </div>
+                    <Footer />
+                  </div>
                 </AuthProvider>
               </CategoriesProvider>
             </SportsProvider>

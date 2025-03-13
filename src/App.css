@@ -408,6 +408,28 @@ body {
   color: black;
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure full height */
+}
+
+.content {
+  flex: 1; /* Pushes the footer down */
+}
+
+.footer {
+  background-color: #001b76; /* Example color */
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
 /* small screen settings and above */
 @media screen and (max-width: 768px) {
   .cartItem-container {
