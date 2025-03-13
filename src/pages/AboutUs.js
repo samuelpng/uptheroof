@@ -19,9 +19,9 @@ export default function AboutUs() {
     <Fragment>
       <Container>
         <div className="row mt-3">
-          <div className="form mx-auto col-md-6 col-lg-5 mt-4 p-4 shadow-lg" style={{ border: "1px solid lightslategray" }}>
-            <h1 className="text-center" style={{ fontFamily: "Righteous" }}>About Us</h1>
-            <img src="/images/sports-engineering-logo.png" style={{ width: "50%", marginLeft: "25%" }}></img>
+          {/* <div className="form mx-auto col-md-6 col-lg-5 mt-4 p-4 shadow-lg" style={{ border: "1px solid lightslategray" }}> */}
+            <h1 className="text-center" >About Us</h1>
+            <img src="/images/sports-engineering-logo.png" style={{ width: "20%", marginLeft: "40%" }}></img>
 
             <div>
                 <h5>Our company is experienced in solving complex sporting equipment issues and in representing our clients’ best interest . We have been providing our services to big events  like SEA Games, Youth Olympic Games, Asian Indoor & Martial Arts Game, FIBA 3x3 Asian Singapore etc. </h5>
@@ -35,7 +35,7 @@ export default function AboutUs() {
 
             {/* <p class="text-center">Don't have an account? <a href="/register">Register here</a></p> */}
           </div>
-        </div>
+        {/* </div> */}
       </Container>
     </Fragment>
   );
