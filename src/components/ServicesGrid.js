@@ -3,7 +3,7 @@ import { Container, Row, Col, Card, Button } from "react-bootstrap";
 
 const services = [
   {
-    image: "/images/floorball.png", // Replace with actual image URL
+    image: "/images/basketball.jpg", 
     title: "Sports Catalogues at Wholesale prices",
     description:
       "Take a look at our range of items.",
@@ -14,6 +14,13 @@ const services = [
     title: "Outdoor and Indoor Sports Flooring",
     description:
       "Get in touch with us today for the best indoor and outdoor sports flooring in Singapore today!",
+    link: "#",
+  },
+  {
+    image: "/images/napfaequipment.png",
+    title: "Napfa Equipment",
+    description:
+      "Get in touch with us for Napfa equipment for your school",
     link: "#",
   },
   {
