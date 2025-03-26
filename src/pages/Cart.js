@@ -2,14 +2,13 @@ import React, { Fragment, useEffect, useState, useContext } from "react";
 import { Container, Button, CloseButton } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { supabase } from "../supabaseClient"; 
-// import CustomerContext from "../contexts/CustomerContext"; 
 import { useAuth } from "../contexts/AuthContext";
+import { sendOrderEmail } from '../utils/emailService';
 
 export default function Cart() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [cartItems, setCartItems] = useState([]);
 
-  // const context = useContext(CustomerContext);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -72,7 +71,7 @@ export default function Cart() {
     }
   };
 
-  // Example deleteCartItem function
+  // delete cart item function
   const deleteCartItem = async (productId) => {
     const { error: categoryError } = await supabase
       .from('profiles_products')
@@ -84,13 +83,24 @@ export default function Cart() {
       console.error('Error deleting:', categoryError);
     } else {
       console.log('Successfully deleted');
+      getCartItems()
     }
 
   };
 
   // Example checkout / inquire function
   const checkout = async () => {
+    //update orders table
+
+    //send email
+    const orderDetails = {
+      name: 'John Doe',
+      email: user.email,
+      total: 85,
+    };
     
+    // Call the function on checkout
+    await sendOrderEmail(orderDetails);
   };
 
   return (
@@ -163,10 +173,9 @@ export default function Cart() {
                           <p className="mb-3">x{c.quantity}</p>
                         </Fragment>
                       ))}
-                      <hr />
+                      <hr />  
                       <div style={{ display: "flex", justifyContent: "space-between" }}>
                         <div>Total</div>
-                        {/* If you track price, display it here */}
                       </div>
                     </div>
                     <div className="d-grid my-4 mx-2">

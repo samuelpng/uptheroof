@@ -49,6 +49,22 @@ const ImageUploader = ({ images, onImageUpload }) => {
     setShowModal(false);
   };
 
+  const handleNoCrop = () => {
+    if (!croppingImage) return;
+  
+    const newImage = {
+      file: croppingImage.file,
+      preview: croppingImage.preview,
+    };
+  
+    // Upload without cropping
+    onImageUpload([...images, newImage]);
+  
+    // Reset state
+    setCroppingImage(null);
+    setShowModal(false);
+  };
+
   // Remove image
   const handleRemove = (index) => {
     onImageUpload(images.filter((_, i) => i !== index));
@@ -119,14 +135,15 @@ const ImageUploader = ({ images, onImageUpload }) => {
               image={croppingImage.preview}
               crop={crop}
               zoom={zoom}
-              aspect={1} // 1:1 aspect ratio
               onCropChange={setCrop}
               onZoomChange={setZoom}
               onCropComplete={onCropComplete}
+              aspect={'1'}
             />
           )}
         </Modal.Body>
         <Modal.Footer>
+          <Button variant="secondary" onClick={handleNoCrop}>Don't crop</Button>
           <Button variant="secondary" onClick={() => setShowModal(false)}>❌ Cancel</Button>
           <Button onClick={handleCropConfirm}>✅ Confirm Crop</Button>
         </Modal.Footer>

@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Row, Col, Nav, Badge } from "react-bootstrap";
-import { FaFacebook, FaLinkedin, FaWhatsapp, FaArrowUp } from "react-icons/fa";
+import { FaFacebook, FaLinkedin, FaWhatsapp, FaArrowUp, FaInstagram } from "react-icons/fa";
 import "../Footer.css";
 
 const Footer = () => {
@@ -39,18 +39,21 @@ const Footer = () => {
 
           {/* Right Section - Contact Details */}
           <Col md={6} className="text-md-end mt-3 mt-md-0">
-            <p className="mb-1">485 Yio Chu Kang Road #03-13, Catle Green, Singapore 787058</p>
+            <p className="mb-1">3018 Bedok North Street 5, #06-09 Eastlink, Singapore 486132</p>
             <p className="mb-1">
-              <a href="mailto:ejsportsengineering@gmail.com" className="text-white">
-                ejsportsengineering@gmail.com
+              <a href="mailto:ejsportseng@gmail.com" className="text-white">
+                ejsportseng@gmail.com
               </a>
             </p>
-            <p className="mb-3">(+65) 9022 2227</p>
+            <p className="mb-3">(+65) 8444 2590</p>
 
             {/* Social Media Icons */}
             <div className="d-flex justify-content-md-end gap-3">
               <a href="#" className="text-white fs-4">
                 <FaFacebook />
+              </a>
+              <a href="#" className="text-white fs-4">
+                <FaInstagram />
               </a>
               <a href="#" className="text-white fs-4">
                 <FaWhatsapp />
