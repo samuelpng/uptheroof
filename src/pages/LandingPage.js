@@ -6,6 +6,7 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { Card } from "react-bootstrap";
 import { createSearchParams, useNaigate, Link } from "react-router-dom";
+import ServicesGrid from "../components/ServicesGrid";
 
 
 export default function LandingPage() {
@@ -83,7 +84,8 @@ export default function LandingPage() {
       
 
       <div>
-        <h1 className="text-center my-3" style={{fontFamily:"Righteous"}}>SHOP BY SPORT</h1>
+        <ServicesGrid />
+        {/* <h1 className="text-center my-3" style={{fontFamily:"Righteous"}}>SHOP BY SPORT</h1>
         <div className="row ">
           <a className="col-md-4 p-3" href="/shop/3">
             <img src="/images/floorball.png" style={{ width: "100%" }}></img>
@@ -94,9 +96,9 @@ export default function LandingPage() {
           <a className="col-md-4 p-3" href="/shop/1">
             <img src="/images/basketball.png" style={{ width: "100%" }}></img>
           </a>
-        </div>
+        </div> */}
       </div>
-      <div style={{ height: "40px" }}></div>\
+      <div style={{ height: "40px" }}></div>
       </div>
     </Fragment>
   )

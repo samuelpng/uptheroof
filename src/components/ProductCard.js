@@ -30,7 +30,7 @@ export default function ProductCard(props) {
               <Card.Img
                 variant="top"
                 className="back-img"
-                src={p.image_url2 ?? p.image_url}
+                src={p.image_url}
                 style={{
                     width: "100%",
                     height: "auto",
