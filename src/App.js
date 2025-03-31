@@ -63,6 +63,7 @@ function App() {
                         <Route path="/profile" element={<Profile />} />
                         <Route path="/stripe" element={<Stripe />} />
                         <Route path="/orders" element={<Orders />} />
+                        <Route path="/contact-us" element={<ContactUs />}/>
                         <Route path="portfolio" element={<Portfolio />} />
                         {/* <AuthProvider> */}
                         <Route path="/admin/*">

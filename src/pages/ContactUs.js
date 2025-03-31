@@ -1,65 +1,92 @@
-import { Fragment, useContext, useState } from 'react';
-import CustomerContext from '../contexts/CustomerContext';
-import '../App.css';
-import { useNavigate } from 'react-router-dom';
-import { Container, Form, Button } from 'react-bootstrap';
+import React, { useState } from "react";
+import { Container, Row, Col, Form, Button, Image } from "react-bootstrap";
+import { createClient } from "@supabase/supabase-js";
+import { supabase } from "../supabaseClient";
 
-export default function ContactUs() {
 
-  const context = useContext(CustomerContext)
-  const navigate = useNavigate()
+const ContactUs = () => {
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    contact: '',
-    message: ''
-  })
+    name: "",
+    email: "",
+    phone: "",
+    message: ""
+  });
+  const [status, setStatus] = useState("");
 
-  const updateFormField = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-  const login = async () => {
-    let email = formData.email;
-    let password = formData.password
-    let response = await context.login(email, password)
-    console.log("login =>", response)
-
-    if (response) {
-      navigate('/')
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus("Sending...");
+    
+    const { data, error } = await supabase.from("contact_us").insert([{ 
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      message: formData.message
+    }]);
+    
+    if (error) {
+      setStatus("Failed to send message. Please try again.");
+    } else {
+      setStatus("Message sent successfully!");
+      setFormData({ name: "", email: "", phone: "", message: "" });
     }
-  }
+  };
 
   return (
-    <Fragment>
-      <Container>
-        <div className="row mt-3">
-          <div className="form mx-auto col-md-6 col-lg-5 mt-4 p-4 shadow-lg" style={{ border: "1px solid lightslategray" }}>
-            <h1 className="text-center" style={{ fontFamily: "Righteous" }}>Contact Us</h1>
-            <img src="/images/sports-engineering-logo.png" style={{ width: "50%", marginLeft: "25%" }}></img>
-
-            <Form className="register-form my-4">
-              <Form.Control type="text" name="fullname" className="form-input bg-transparent rounded-0 mb-3"
-                placeholder="Full Name" value={formData.fullName} onChange={updateFormField} />
-              <Form.Control type="text" name="email" className="form-input bg-transparent rounded-0 mb-3"
-                placeholder="Email" value={formData.email} onChange={updateFormField} />
-              <Form.Control type="text" name="contact" className="form-input bg-transparent rounded-0 mb-3"
-                placeholder="Contact Number" value={formData.contact} onChange={updateFormField} />
-              <Form.Control as="textarea" name="message" className="bg-transparent rounded-0 mb-3"
-                placeholder="Your Message" style={{ height: '25vh' }} value={formData.message} onChange={updateFormField} />
-
-
-              <div className="d-grid mt-4">
-                <Button variant="dark" className="rounded-0 py-2" type="button" onClick={login}>SUBMIT</Button>
-              </div>
-            </Form>
-            {/* <p class="text-center">Don't have an account? <a href="/register">Register here</a></p> */}
-          </div>
-        </div>
-      </Container>
-    </Fragment>
+    <Container className="py-5">
+      <Row className="text-center mb-4">
+        <Col>
+          <h2>Contact Us</h2>
+          <p>We'd love to hear from you! Reach out to us for any inquiries.</p>
+        </Col>
+      </Row>
+      <Row className="mb-4">
+        <Col md={6}>
+          <h4>Get in Touch</h4>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="name" className="mb-3">
+              <Form.Label>Name</Form.Label>
+              <Form.Control type="text" name="name" value={formData.name} onChange={handleChange} required />
+            </Form.Group>
+            <Form.Group controlId="email" className="mb-3">
+              <Form.Label>Email</Form.Label>
+              <Form.Control type="email" name="email" value={formData.email} onChange={handleChange} required />
+            </Form.Group>
+            <Form.Group controlId="phone" className="mb-3">
+              <Form.Label>Phone</Form.Label>
+              <Form.Control type="text" name="phone" value={formData.phone} onChange={handleChange} required />
+            </Form.Group>
+            <Form.Group controlId="message" className="mb-3">
+              <Form.Label>Message</Form.Label>
+              <Form.Control as="textarea" rows={4} name="message" value={formData.message} onChange={handleChange} required />
+            </Form.Group>
+            <Button variant="primary" type="submit">Send Message</Button>
+          </Form>
+          {status && <p className="mt-3">{status}</p>}
+        </Col>
+        <Col md={6}>
+          <h4>Contact Information</h4>
+          <p><strong>Email:</strong> ejsportseng@gmail.com</p>
+          <p><strong>Phone:</strong> (+65) 8444 2590</p>
+          <p><strong>Address:</strong> 3018 Bedok North Street 5, #06-09 Eastlink, Singapore 486132</p>
+          <h4>Follow Us</h4>
+          <p>
+            <a href="#">Facebook</a> | <a href="#">Instagram</a> | <a href="#">Twitter</a>
+          </p>
+        </Col>
+      </Row>
+      <Row className="mb-4">
+        <Col>
+          <h4>Our Location</h4>
+          <Image src="/images/map-placeholder.png" fluid rounded />
+        </Col>
+      </Row>
+    </Container>
   );
-}
+};
+
+export default ContactUs;

@@ -189,13 +189,7 @@ export default function ProductPage() {
       </Row>
     </Container>
     </section>
-    <section id="contact" className="py-5">
-        <div className="container text-center">
-          <h2>Contact Us</h2>
-          <p>Email: contact@company.com</p>
-          <p>Phone: +1 (123) 456-7890</p>
-        </div>
-      </section>
+  
       {/* <Container>
                 <div className="row container">
                     <div className="col-md-7 mb-2">

@@ -1,42 +1,86 @@
-import { Fragment, useContext, useState } from 'react';
-import CustomerContext from '../contexts/CustomerContext';
-import '../App.css';
-import { useNavigate } from 'react-router-dom';
-import { Container, Form, Button } from 'react-bootstrap';
+import React from "react";
+import { Container, Row, Col, Image, Card } from "react-bootstrap";
 
-export default function AboutUs() {
-
-  const context = useContext(CustomerContext)
-  const navigate = useNavigate()
-//   const [formData, setFormData] = useState({
-//     fullName: '',
-//     email: '',
-//     contact: '',
-//     message: ''
-//   })
-
+const AboutUs = () => {
   return (
-    <Fragment>
-      <Container>
-        <div className="row mt-3">
-          {/* <div className="form mx-auto col-md-6 col-lg-5 mt-4 p-4 shadow-lg" style={{ border: "1px solid lightslategray" }}> */}
-            <h1 className="text-center" >About Us</h1>
-            <img src="/images/sports-engineering-logo.png" style={{ width: "20%", marginLeft: "40%" }}></img>
-
-            <div>
-                <h5>Our company is experienced in solving complex sporting equipment issues and in representing our clients’ best interest . We have been providing our services to big events  like SEA Games, Youth Olympic Games, Asian Indoor & Martial Arts Game, FIBA 3x3 Asian Singapore etc. </h5>
-                <h3>Mission</h3> 
-                <h5>To offer every sport quality equipment, excellent service and creative solutions that bring out the best of athletes </h5>
-                <h3>Vision</h3> 
-                <h5>Elevate Sports for Every Athlete,  Everywhere </h5>
-                
-
-            </div>
-
-            {/* <p class="text-center">Don't have an account? <a href="/register">Register here</a></p> */}
-          </div>
-        {/* </div> */}
-      </Container>
-    </Fragment>
+    <Container className="py-5">
+      <Row className="text-center mb-4">
+        <Col>
+          <h2>About Us</h2>
+        </Col>
+      </Row>
+      <Row className="mb-4">
+        <Col md={6}>
+          <h4>Mission</h4>
+          <p>
+            To offer every sport quality equipment, excellent service, and
+            creative solutions that bring out the best of athletes.
+          </p>
+        </Col>
+        <Col md={6}>
+          <h4>Vision</h4>
+          <p>Elevate Sports for Every Athlete, Everywhere.</p>
+        </Col>
+      </Row>
+      <Row className="mb-4">
+        <Col>
+          <h4>Company Description</h4>
+          <p>
+            Our company is experienced in solving complex sporting equipment
+            issues and in representing our clients’ best interests. We have
+            been providing our services to big events like SEA Games, Youth
+            Olympic Games, Asian Indoor & Martial Arts Games, FIBA 3x3 Asian
+            Singapore, etc.
+          </p>
+        </Col>
+      </Row>
+      <Row className="mb-4">
+        <Col>
+          <h4>Company Images</h4>
+          <Row>
+            <Col md={4}>
+              <Image src="/images/company1.jpg" fluid rounded />
+            </Col>
+            <Col md={4}>
+              <Image src="/images/company2.jpg" fluid rounded />
+            </Col>
+            <Col md={4}>
+              <Image src="/images/company3.jpg" fluid rounded />
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+      {/* Optional Team Section */}
+      {/* <Row className="mb-4">
+        <Col>
+          <h4>Our Team</h4>
+          <Card>
+            <Card.Body>
+              <Card.Title>Team Member Name</Card.Title>
+              <Card.Text>Role in the company</Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row> */}
+      {/* Media Kit/Logos */}
+      <Row className="mb-4">
+        <Col>
+          <h4>Media Kit & Logos</h4>
+          <Row>
+            <Col md={4}>
+              <Image src="/logos/logo-white.png" fluid />
+            </Col>
+            <Col md={4}>
+              <Image src="/logos/logo-black.png" fluid />
+            </Col>
+            <Col md={4}>
+              <Image src="/logos/logo-colored.png" fluid />
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    </Container>
   );
-}
+};
+
+export default AboutUs;
