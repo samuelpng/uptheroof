@@ -1,130 +1,69 @@
 import { useContext, useEffect, useState, Fragment } from "react";
-import {
-  Container,
-  Form,
-  FormControl,
-  Nav,
-  Navbar,
-  NavDropdown,
-} from "react-bootstrap";
+import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { useAuth } from "../contexts/AuthContext";
-import { FaUser, FaShoppingCart } from "react-icons/fa";
 import CategoriesContext from "../contexts/CategoriesContext";
 import SportsContext from "../contexts/SportsContext";
 
 export default function NavBar() {
-  const { sports, sportsLoading, sportsError } = useContext(SportsContext);
-  const { categories, categoriesLoading, categoriesError } =
-    useContext(CategoriesContext);
+  const { sports, sportsLoading } = useContext(SportsContext);
+  const { categories, categoriesLoading } = useContext(CategoriesContext);
 
   const [loggedIn, setLoggedIn] = useState(false);
+  const { user, logout } = useAuth();
 
-  const { user, logout, isLoading } = useAuth();
   const handleLogout = async () => {
     await logout();
   };
 
   useEffect(() => {
-    console.log("user", user);
-    if (user) {
-      setLoggedIn(true);
-    } else {
-      setLoggedIn(false);
-    }
+    setLoggedIn(!!user);
   }, [user]);
+
+  // Sort categories and sports alphabetically
+  const sortedCategories = categories ? [...categories].sort((a, b) => a.category_name.localeCompare(b.category_name)) : [];
+  const sortedSports = sports ? [...sports].sort((a, b) => a.sport_name.localeCompare(b.sport_name)) : [];
 
   return (
     <Fragment>
       <div className="top-bar">
         <div className="top-bar-container">
-          {/* Logo */}
           <a href="/" className="logo">
             <img src="/images/sports-engineering-logo.png" alt="Company Logo" />
           </a>
-
-          {/* Search Bar (Moves below logo on mobile) */}
           <form className="search-bar">
             <input type="text" placeholder="Search our catalog" />
           </form>
-
-          {/* Account & Cart Icons */}
           <div className="icons">
-            <a href="/account" className="icon">
-              👤
-            </a>
-            <a href="/cart" className="icon">
-              🛒 
-              {/* <span className="cart-count">0</span> */}
-            </a>
+            <a href="/account" className="icon">👤</a>
+            <a href="/cart" className="icon">🛒</a>
           </div>
         </div>
       </div>
 
       <Navbar expand="lg" sticky="top" className="lg-navbar orange-navbar">
         <Container>
-          {/* <Navbar.Brand href="/" className="ms-2"><img src="/images/sports-engineering-logo.png" alt="Company Logo" style={{ height: "40px" }}></img></Navbar.Brand> */}
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              {/* <Nav.Link href="/shop/room" className="me-3">
-                Categories
-              </Nav.Link> */}
-              <NavDropdown title="Categories" id="basic-nav-dropdown">
-                {!categoriesLoading &&
-                    categories && 
-                    categories.map((category) => (
-                        <NavDropdown.Item
-                            href="/shop/room"
-                            className="dropdown-submenu"
-                        >
-                            <span className="dropdown-item-text">{category.category_name}</span>
-                        </NavDropdown.Item>
-                    ))
-                }
+              <NavDropdown title="Categories" id="categories-dropdown">
+                {!categoriesLoading && sortedCategories.map((category) => (
+                  <NavDropdown.Item
+                    key={category.id}
+                    href={`/shop/category/${category.id}`}
+                  >
+                    {category.category_name}
+                  </NavDropdown.Item>
+                ))}
               </NavDropdown>
-              <NavDropdown title="Shop by Sport" id="basic-nav-dropdown">
-                <NavDropdown.Item
-                  href="/shop/room"
-                  className="dropdown-submenu"
-                >
-                  <span className="dropdown-item-text">All</span>
-                </NavDropdown.Item>
-                <NavDropdown.Item className="dropdown-submenu">
-                  <span className="dropdown-item-text">Sports</span>
-                  <ul className="dropdown-menu">
-                    {!sportsLoading &&
-                      sports &&
-                      sports.map((sport) => (
-                        <li key={sport.id}>
-                          <NavDropdown.Item
-                            onClick={() => {
-                              window.location.href = `/shop/${sport.id}`;
-                            }}
-                          >
-                            {sport.sport_name}
-                          </NavDropdown.Item>
-                        </li>
-                      ))}
-                  </ul>
-                </NavDropdown.Item>
-                <NavDropdown.Item className="dropdown-submenu">
-                  <span className="dropdown-item-text">Categories</span>
-                  <ul className="dropdown-menu">
-                    {!categoriesLoading &&
-                      categories &&
-                      categories.map((category) => (
-                        <li key={category.id}>
-                          <NavDropdown.Item
-                            onClick={() => {
-                              window.location.href = `/shop/${category.id}`;
-                            }}
-                          >
-                            {category.category_name}
-                          </NavDropdown.Item>
-                        </li>
-                      ))}
-                  </ul>
-                </NavDropdown.Item>
+              <NavDropdown title="Shop by Sport" id="sports-dropdown">
+                {!sportsLoading && sortedSports.map((sport) => (
+                  <NavDropdown.Item
+                    key={sport.id}
+                    href={`/shop/sports/${sport.id}`}
+                  >
+                    {sport.sport_name}
+                  </NavDropdown.Item>
+                ))}
               </NavDropdown>
             </Nav>
             <Nav className="ms-auto">

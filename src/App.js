@@ -49,7 +49,11 @@ function App() {
                       <Routes>
                         <Route path="/" element={<LandingPage />} />
                         <Route
-                          path="/shop/:brand_id"
+                          path="/shop/sports/:sportsId"
+                          element={<ProductsListing />}
+                        />
+                        <Route
+                          path="/shop/category/:categoryId"
                           element={<ProductsListing />}
                         />
                         <Route
