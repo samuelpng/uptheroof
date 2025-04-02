@@ -151,7 +151,7 @@ export default function ProductPage() {
         <Col md={6}>
           <div className="p-4 border rounded bg-white shadow-sm">
             <h3 className="fw-bold">{product.name}</h3>
-            <p className="text-muted">SKU: IF HAVE</p>
+            {/* <p className="text-muted">SKU: IF HAVE</p> */}
             <p><b>Categories:</b> {product.products_categories?.length > 0
                                 ? product.products_categories.map(pc => pc.categories.category_name).join(', ')
                                 : 'No Categories'}
