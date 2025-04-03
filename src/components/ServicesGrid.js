@@ -7,28 +7,40 @@ const services = [
     title: "Sports Catalogues at Wholesale prices",
     description:
       "Take a look at our range of items.",
-    link: "/shop/room",
+    link: "/shop",
+    button: "Explore"
   },
   {
     image: "/images/courttape.png",
     title: "Outdoor and Indoor Sports Flooring",
     description:
       "Get in touch with us today for the best indoor and outdoor sports flooring in Singapore today!",
-    link: "#",
+    link: "/contact-us",
+    button: "Enquire"
   },
   {
     image: "/images/napfaequipment.png",
     title: "Napfa Equipment",
     description:
       "Get in touch with us for Napfa equipment for your school",
-    link: "#",
+    link: "/contact-us",
+    button: "Enquire"
+  },
+  {
+    image: "/images/portfolioimage.png",
+    title: "Our Portfolio",
+    description:
+      "Explore our portfolio to discover how we've delivered impactful solutions for schools and other organisations",
+    link: "/portfolio",
+    button: "Explore"
   },
   {
     image: "/images/call.png",
     title: "Contact EJ Sports Singapore",
     description:
       "Please feel free to contact us if you have any questions or queries to the products or services we provide",
-    link: "#",
+    link: "/contact-us",
+    button: "Contact Us"
   },
 ];
 
@@ -58,7 +70,7 @@ const ServicesGrid = () => {
                 <Card.Title>{service.title}</Card.Title>
                 <Card.Text>{service.description}</Card.Text>
                 <Button variant="secondary" href={service.link}>
-                  Explore »
+                  {service.button}
                 </Button>
               </Card.Body>
             </Card>
