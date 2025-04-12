@@ -88,6 +88,7 @@ export default function NavBar() {
                     </NavDropdown.Item>
                   ))}
               </NavDropdown>
+              <Nav.Link href="/shop">Shop All</Nav.Link>
             </Nav>
             <Nav className="ms-auto">
               {/* {loggedIn ? (
