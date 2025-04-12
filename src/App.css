@@ -430,6 +430,21 @@ html, body {
   padding: 20px;
 }
 
+.icon-dropdown .dropdown-toggle::after {
+  display: none !important; /* Remove the arrow */
+}
+
+.icons .icon {
+  font-size: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.dropdown-menu {
+  z-index: 1050 !important; /* Higher than the navbar */
+  position: absolute !important;
+}
+
 /* small screen settings and above */
 @media screen and (max-width: 768px) {
   .cartItem-container {

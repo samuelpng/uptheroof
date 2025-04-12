@@ -1,5 +1,4 @@
-import { Fragment, useContext, useState, useEffect } from "react";
-import CustomerContext from "../contexts/CustomerContext";
+import { Fragment, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Form, Button } from "react-bootstrap";
 import Swal from "sweetalert2";
@@ -7,7 +6,7 @@ import { supabase } from "../supabaseClient";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function Login() {
-  const { login } = useAuth(); // Get auth functions from context
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
 
@@ -19,10 +18,9 @@ export default function Login() {
   };
 
   const handleLogin = async () => {
-    let email = formData.email;
-    let password = formData.password;
+    const { email, password } = formData;
 
-    let response = await login(email, password);
+    const response = await login(email, password);
     console.log("login =>", response);
 
     if (response?.error) {
@@ -45,7 +43,7 @@ export default function Login() {
 
     if (email) {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: "http://localhost:3000/login", // Fixed URL
+        redirectTo: "http://localhost:3000/login", // Change for prod!
       });
 
       if (error) {
@@ -53,6 +51,16 @@ export default function Login() {
       } else {
         Swal.fire("Success!", "A password reset link has been sent to your email.", "success");
       }
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+    });
+
+    if (error) {
+      Swal.fire("Error", error.message, "error");
     }
   };
 
@@ -89,42 +97,50 @@ export default function Login() {
   return (
     <Fragment>
       <Container>
-        <div className="row mt-3">
-          <div className="form mx-auto col-md-6 col-lg-5 mt-4 p-4 shadow-lg" style={{ border: "1px solid lightslategray" }}>
-            <h1 className="text-center" style={{ fontFamily: "Righteous" }}>Sign In</h1>
-            <img src="/images/sports-engineering-logo.png" style={{ width: "50%", marginLeft: "25%" }} alt="Logo" />
+        <div className="row justify-content-center mt-5">
+          <div className="col-md-6 col-lg-5 p-4 shadow-sm border rounded bg-white">
+            <h2 className="text-center mb-4">Sign In</h2>
 
-            <Form className="register-form my-4">
-              <Form.Control
-                type="email"
-                name="email"
-                className="form-input bg-transparent rounded-0 mb-3"
-                placeholder="Email"
-                value={formData.email}
-                onChange={updateFormField}
-              />
-              <Form.Control
-                type="password"
-                name="password"
-                className="form-input bg-transparent rounded-0 mb-3"
-                placeholder="Password"
-                value={formData.password}
-                onChange={updateFormField}
-              />
+            <Form>
+              <Form.Group className="mb-3">
+                <Form.Control
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value={formData.email}
+                  onChange={updateFormField}
+                />
+              </Form.Group>
 
-              <div className="d-grid mt-4">
-                <Button variant="dark" className="rounded-0 py-2" type="button" onClick={handleLogin}>
-                  SIGN IN
+              <Form.Group className="mb-3">
+                <Form.Control
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={updateFormField}
+                />
+              </Form.Group>
+
+              <div className="d-grid mb-3">
+                <Button variant="primary" onClick={handleLogin}>
+                  Sign In
                 </Button>
               </div>
+
+              {/* <div className="d-grid mb-3">
+                <Button variant="outline-dark" onClick={handleGoogleLogin}>
+                  Sign In with Google
+                </Button>
+              </div> */}
             </Form>
-            <p className="text-center">
-              Don't have an account? <a href="/register">Register here</a>
+
+            <p className="text-center mt-3">
+              Don’t have an account? <a href="/register">Register</a>
             </p>
             <p className="text-center">
-              Forgot your password?{" "}
               <a onClick={handleForgotPassword} style={{ cursor: "pointer" }}>
-                Click here to reset your password
+                Forgot password?
               </a>
             </p>
           </div>
