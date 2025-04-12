@@ -16,7 +16,7 @@ const Footer = () => {
                   <Nav.Link href="/about-us" className="text-white">
                     About Us
                   </Nav.Link>
-                  <Nav.Link href="/services" className="text-white">
+                  <Nav.Link href="/contact-us" className="text-white">
                     Services
                   </Nav.Link>
                   <Nav.Link href="/portfolio" className="text-white">
