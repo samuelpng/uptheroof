@@ -5,7 +5,7 @@ import "../Footer.css";
 
 const Footer = () => {
   return (
-    <footer className="footer bg-primary text-white py-4">
+    <footer className="footer text-white py-4">
       <Container>
         <Row>
           {/* Left Section - Links */}

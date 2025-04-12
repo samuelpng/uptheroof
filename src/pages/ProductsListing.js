@@ -21,43 +21,74 @@ export default function ProductsListing() {
     const [products, setProducts] = useState([]);
     const [isFetched, setIsFetched] = useState(false);
     const [show, setShow] = useState(false);
+    const [initialLoad, setInitialLoad] = useState(false);
 
     useEffect(() => {
-        // Set initial filters based on URL params
-        if (sportsId) setSportSearch([sportsId]);
-        if (categoryId) setCategorySearch([categoryId]);
+        const validSportId = sportsId && sportsId !== "undefined";
+        const validCategoryId = categoryId && categoryId !== "undefined";
+    
+        const initialSportsFilter = validSportId ? [sportsId] : [];
+        const initialCategoryFilter = validCategoryId ? [categoryId] : [];
+    
+        // Set initial state
+        setSportSearch(initialSportsFilter);
+        setCategorySearch(initialCategoryFilter);
+    
+        // Immediately search with correct filters
+        search(initialSportsFilter, initialCategoryFilter);
 
-        search([sportsId], [categoryId]); // Fetch products based on params
+        setInitialLoad(true);
     }, [sportsId, categoryId]);
-
+    
     useEffect(() => {
-        search(sportSearch, categorySearch);
+        if (initialLoad) {
+            search(sportSearch, categorySearch);
+        }
     }, [sportSearch, categorySearch]);
 
-    const search = async (sportsFilter = sportSearch, categoriesFilter = categorySearch) => {
+    const search = async (
+        sportsFilter = sportSearch,
+        categoriesFilter = categorySearch
+      ) => {
         let query = supabase
-            .from("products")
-            .select("id, name, description, sport_id, image_url, sports(sport_name), products_categories!inner(categories!inner(id, category_name))");
-
+          .from("products")
+          .select(`
+            id,
+            name,
+            sport_id,
+            image_url,
+            sports(sport_name),
+            products_categories!inner(
+              categories!inner(id, category_name)
+            )
+          `);
+      
+        // Global search filter
         if (globalSearch) {
-            query = query.ilike("name", `%${globalSearch}%`);
+          query = query.ilike("name", `%${globalSearch}%`);
         }
-
-        if (sportsFilter.length > 0) {
-            query = query.in("sport_id", sportsFilter);
+      
+        // Sanitize filters
+        const cleanSportsFilter = (sportsFilter || []).filter(Boolean);
+        const cleanCategoryFilter = (categoriesFilter || []).filter(Boolean);
+      
+        if (cleanSportsFilter.length > 0) {
+          query = query.in("sport_id", cleanSportsFilter);
         }
-
-        if (categoriesFilter.length > 0) {
-            query = query.in("products_categories.categories.id", categoriesFilter);
+      
+        if (cleanCategoryFilter.length > 0) {
+          query = query.in("products_categories.categories.id", cleanCategoryFilter);
         }
-
+      
         const { data, error } = await query;
+      
         if (error) {
-            console.error("Error fetching products:", error);
+          console.error("Error fetching products:", error.message, error.details);
         } else {
-            setProducts(data);
+            console.log('heeloooo')
+          setProducts(data);
         }
-    };
+      };
 
     const handleToggleFilter = (filterType, value) => {
         setCategorySearch((prev) => filterType === 'category'
