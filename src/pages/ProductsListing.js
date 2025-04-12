@@ -1,7 +1,7 @@
 import { Fragment, useContext, useState, useEffect } from "react";
 import '../App.css';
 import ProductsContext from '../contexts/ProductsContext';
-import { Container, Button, Offcanvas, Form, Accordion } from "react-bootstrap";
+import { Container, Button, Offcanvas, Form, Accordion, Pagination } from "react-bootstrap";
 import { useParams } from 'react-router-dom';
 import CardPlaceholder from "../components/CardPlaceholer";
 import ProductCard from "../components/ProductCard";
@@ -13,7 +13,7 @@ export default function ProductsListing() {
     const { sports } = useContext(SportsContext);
     const { categories } = useContext(CategoriesContext);
 
-    const { sportsId, categoryId } = useParams(); // Extract params from URL
+    const { sportsId, categoryId } = useParams();
 
     const [globalSearch, setGlobalSearch] = useState('');
     const [sportSearch, setSportSearch] = useState([]);
@@ -23,81 +23,122 @@ export default function ProductsListing() {
     const [show, setShow] = useState(false);
     const [initialLoad, setInitialLoad] = useState(false);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 16;
+    const [totalCount, setTotalCount] = useState(0);
+
     useEffect(() => {
         const validSportId = sportsId && sportsId !== "undefined";
         const validCategoryId = categoryId && categoryId !== "undefined";
-    
+
         const initialSportsFilter = validSportId ? [sportsId] : [];
         const initialCategoryFilter = validCategoryId ? [categoryId] : [];
-    
-        // Set initial state
+
         setSportSearch(initialSportsFilter);
         setCategorySearch(initialCategoryFilter);
-    
-        // Immediately search with correct filters
-        search(initialSportsFilter, initialCategoryFilter);
 
+        search(initialSportsFilter, initialCategoryFilter, 1);
+        setCurrentPage(1);
         setInitialLoad(true);
     }, [sportsId, categoryId]);
-    
+
     useEffect(() => {
         if (initialLoad) {
-            search(sportSearch, categorySearch);
+            search(sportSearch, categorySearch, currentPage);
         }
     }, [sportSearch, categorySearch]);
 
+    useEffect(() => {
+        if (initialLoad) {
+            search(sportSearch, categorySearch, currentPage);
+        }
+    }, [currentPage]);
+
     const search = async (
         sportsFilter = sportSearch,
-        categoriesFilter = categorySearch
-      ) => {
+        categoriesFilter = categorySearch,
+        page = currentPage
+    ) => {
+        const from = (page - 1) * itemsPerPage;
+        const to = from + itemsPerPage - 1;
+
         let query = supabase
-          .from("products")
-          .select(`
-            id,
-            name,
-            sport_id,
-            image_url,
-            sports(sport_name),
-            products_categories!inner(
-              categories!inner(id, category_name)
-            )
-          `);
-      
-        // Global search filter
+            .from("products")
+            .select(`
+                id,
+                name,
+                sport_id,
+                image_url,
+                sports(sport_name),
+                products_categories!inner(
+                    categories!inner(id, category_name)
+                )
+            `, { count: "exact" })
+            .range(from, to);
+
         if (globalSearch) {
-          query = query.ilike("name", `%${globalSearch}%`);
+            query = query.ilike("name", `%${globalSearch}%`);
         }
-      
-        // Sanitize filters
+
         const cleanSportsFilter = (sportsFilter || []).filter(Boolean);
         const cleanCategoryFilter = (categoriesFilter || []).filter(Boolean);
-      
+
         if (cleanSportsFilter.length > 0) {
-          query = query.in("sport_id", cleanSportsFilter);
+            query = query.in("sport_id", cleanSportsFilter);
         }
-      
+
         if (cleanCategoryFilter.length > 0) {
-          query = query.in("products_categories.categories.id", cleanCategoryFilter);
+            query = query.in("products_categories.categories.id", cleanCategoryFilter);
         }
-      
-        const { data, error } = await query;
-      
+
+        const { data, count, error } = await query;
+
         if (error) {
-          console.error("Error fetching products:", error.message, error.details);
+            console.error("Error fetching products:", error.message, error.details);
         } else {
-            console.log('heeloooo')
-          setProducts(data);
+            setProducts(data);
+            setTotalCount(count);
         }
-      };
+    };
 
     const handleToggleFilter = (filterType, value) => {
-        setCategorySearch((prev) => filterType === 'category'
-            ? prev.includes(value) ? prev.filter(id => id !== value) : [...prev, value]
-            : prev
-        );
-        setSportSearch((prev) => filterType === 'sport'
-            ? prev.includes(value) ? prev.filter(id => id !== value) : [...prev, value]
-            : prev
+        if (filterType === 'category') {
+            setCategorySearch(prev =>
+                prev.includes(value) ? prev.filter(id => id !== value) : [...prev, value]
+            );
+        }
+        if (filterType === 'sport') {
+            setSportSearch(prev =>
+                prev.includes(value) ? prev.filter(id => id !== value) : [...prev, value]
+            );
+        }
+        setCurrentPage(1); // Reset to first page on filter change
+    };
+
+    const renderPagination = () => {
+        const totalPages = Math.ceil(totalCount / itemsPerPage);
+        if (totalPages <= 1) return null;
+
+        return (
+            <Pagination className="justify-content-center mt-4">
+                <Pagination.Prev
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                />
+                {[...Array(totalPages)].map((_, idx) => (
+                    <Pagination.Item
+                        key={idx + 1}
+                        active={idx + 1 === currentPage}
+                        onClick={() => setCurrentPage(idx + 1)}
+                    >
+                        {idx + 1}
+                    </Pagination.Item>
+                ))}
+                <Pagination.Next
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                />
+            </Pagination>
         );
     };
 
@@ -118,7 +159,7 @@ export default function ProductsListing() {
                                 onChange={(e) => setGlobalSearch(e.target.value)}
                                 onKeyUp={(e) => e.key === "Enter" && search()}
                             />
-                            <Button variant="dark rounded-0" onClick={search} className="mb-3" style={{ width: "20%" }}>
+                            <Button variant="dark rounded-0" onClick={() => { setCurrentPage(1); search(); }} className="mb-3" style={{ width: "20%" }}>
                                 Search
                             </Button>
                         </div>
@@ -128,13 +169,21 @@ export default function ProductsListing() {
                             </Button>
                         </div>
                     </div>
+
                     {products.length ? <ProductCard products={products} /> : <CardPlaceholder />}
+                    {renderPagination()}
                 </Container>
 
                 {/* Filters Sidebar */}
                 <Offcanvas show={show} onHide={() => setShow(false)} placement={'end'}>
                     <Offcanvas.Header closeButton>
-                        <Offcanvas.Title>Filters <span className="resetFilters" onClick={() => { setCategorySearch([]); setSportSearch([]); }}>Clear All</span></Offcanvas.Title>
+                        <Offcanvas.Title>
+                            Filters <span className="resetFilters" onClick={() => {
+                                setCategorySearch([]);
+                                setSportSearch([]);
+                                setCurrentPage(1);
+                            }}>Clear All</span>
+                        </Offcanvas.Title>
                     </Offcanvas.Header>
                     <Offcanvas.Body>
                         <Accordion defaultActiveKey="0" className="mt-3" alwaysOpen>
