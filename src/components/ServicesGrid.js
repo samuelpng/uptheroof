@@ -22,8 +22,8 @@ const services = [
     image: "/images/napfaequipment.png",
     title: "Napfa Equipment",
     description:
-      "Get in touch with us for Napfa equipment for your school",
-    link: "/contact-us",
+      "View our NAPFA equipment and get in touch with us for Napfa equipment for your school",
+    link: "/shop/category/18",
     button: "Enquire"
   },
   {
