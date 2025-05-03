@@ -67,13 +67,13 @@ export default function ProductPage() {
   }, [productId]);
 
   const addToCart = async () => {
-    // Check if user is logged in
     if (user) {
+      // User is logged in - save to database
       const { data, error } = await supabase.from("profiles_products").insert({
         profile_id: user.id,
         product_id: productId,
       });
-
+  
       if (!error) {
         Swal.fire({
           title: "Added to Cart",
@@ -84,15 +84,26 @@ export default function ProductPage() {
       } else {
         Swal.fire({
           title: "Oops!",
-          text: error || "There was a problem adding your product to the cart.",
+          text: error.message || "There was a problem adding your product to the cart.",
           icon: "error",
           confirmButtonText: "OK",
         });
       }
     } else {
-      toast.error("You have to log in to add to cart");
+      // User not logged in - save to localStorage
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  
+      // Add product if not already added (optional: prevent duplicates)
+      const exists = cart.some(item => item.id === product.id);
+      if (!exists) {
+        cart.push(product);
+        localStorage.setItem('cart', JSON.stringify(cart));
+      }
+  
+      // Show a success toast, not error
+      toast.success("Added to cart! Log in to checkout later.");
     }
-  };
+  };  
   
 
   if (!product) {

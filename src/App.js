@@ -8,7 +8,6 @@ import NavBar from "./components/NavBar";
 
 //=== Pages ===
 import LandingPage from "./pages/LandingPage";
-import Variants from "./pages/Variants";
 import Cart from "./pages/Cart";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -32,6 +31,7 @@ import { CategoriesProvider } from "./contexts/CategoriesContext";
 import ProductPage from "./pages/ProductPage";
 import Portfolio from "./pages/Portfolio";
 import Footer from "./components/Footer";
+import Napfa from "./pages/napfa";
 
 function App() {
   return (
@@ -73,6 +73,7 @@ function App() {
                         <Route path="/orders" element={<Orders />} />
                         <Route path="/contact-us" element={<ContactUs />}/>
                         <Route path="portfolio" element={<Portfolio />} />
+                        <Route path="/napfa" element={<Napfa />}/>
                         {/* <AuthProvider> */}
                         <Route path="/admin/*">
                           {/* <Route path="dashboard" element={<Dashboard />} /> */}

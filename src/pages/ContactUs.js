@@ -75,7 +75,9 @@ const ContactUs = () => {
           <p><strong>Address:</strong> 3018 Bedok North Street 5, #06-09 Eastlink, Singapore 486132</p>
           <h4>Follow Us</h4>
           <p>
-            <a href="#">Facebook</a> | <a href="#">Instagram</a> | <a href="#">Twitter</a>
+            {/* <a href="#">Facebook</a> |  */}
+            <a href="https://www.instagram.com/ejsportsengine/profilecard/?igsh=YXpjeHR6dGRqcWk4">Instagram</a> | 
+            {/* <a href="#">Twitter</a> */}
           </p>
         </Col>
       </Row>

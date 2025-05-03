@@ -52,7 +52,7 @@ const Footer = () => {
               <a href="#" className="text-white fs-4">
                 <FaFacebook />
               </a>
-              <a href="#" className="text-white fs-4">
+              <a href="https://www.instagram.com/ejsportsengine/profilecard/?igsh=YXpjeHR6dGRqcWk4" className="text-white fs-4">
                 <FaInstagram />
               </a>
               <a href="#" className="text-white fs-4">
