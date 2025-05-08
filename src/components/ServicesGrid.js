@@ -38,7 +38,7 @@ const services = [
     image: "/images/flooring.png",
     title: "Flooring Services",
     description:
-      "We offer flooring services. Enquire to find out more",
+      "We provide safe, durable flooring for sports areas and kids' playgrounds—built for comfort, impact absorption, and lasting performance. Enquire now to find the right solution for your space.",
     link: "/contact-us",
     button: "Contact Us"
   },
