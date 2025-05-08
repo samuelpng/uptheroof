@@ -40,13 +40,13 @@ const services = [
     description:
       "We provide safe, durable flooring for sports areas and kids' playgrounds—built for comfort, impact absorption, and lasting performance. Enquire now to find the right solution for your space.",
     link: "/contact-us",
-    button: "Contact Us"
+    button: "Enquire"
   },
   {
     image: "/images/call.png",
     title: "Contact EJ Sports Singapore",
     description:
-      "Please feel free to contact us if you have any questions or queries to the products or services we provide",
+      "Please feel free to contact us if you have any questions or queries on the products or services we provide",
     link: "/contact-us",
     button: "Contact Us"
   },

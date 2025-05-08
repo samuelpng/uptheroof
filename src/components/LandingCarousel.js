@@ -10,6 +10,22 @@ export default function LandingCarousel() {
         <div className="carousel-container">
           <img
             className="d-block w-100"
+            src="/images/flooring-banner.png"
+            alt="xSpeed"
+          />
+        </div>
+        <Carousel.Caption className="landing-carousel">
+          <h3>FLOORING SERVICES</h3>
+          {/* <h5>UNLOCK SPEED IN ALL DIMENSIONS WITH THE NEW X SPEEDPORTAL.</h5> */}
+          {/* <a className="button-dark" href="/products/3">
+            Shop Now
+          </a> */}
+        </Carousel.Caption>
+      </Carousel.Item>
+      <Carousel.Item>
+        <div className="carousel-container">
+          <img
+            className="d-block w-100"
             src="/images/goalpost.png"
             alt="xSpeed"
           />
