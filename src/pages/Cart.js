@@ -3,12 +3,16 @@ import { Container, Button, CloseButton } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { supabase } from "../supabaseClient";
 import { useAuth } from "../contexts/AuthContext";
-import { sendOrderEmail } from '../utils/emailService';
-import Swal from 'sweetalert2';
+import { sendOrderEmail } from "../utils/emailService";
+import Swal from "sweetalert2";
 
 export default function Cart() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [cartItems, setCartItems] = useState([]);
+  const [promoCode, setPromoCode] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState(null);
+  const [promoError, setPromoError] = useState("");
+
   const { user } = useAuth();
 
   useEffect(() => {
@@ -36,7 +40,7 @@ export default function Cart() {
   };
 
   const getLocalCartItems = () => {
-    const localCart = JSON.parse(localStorage.getItem('cart')) || [];
+    const localCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCartItems(localCart);
   };
 
@@ -46,6 +50,19 @@ export default function Cart() {
         item.product_id === productId ? { ...item, notes: newNotes } : item
       )
     );
+  };
+
+  const handleApplyPromo = () => {
+    // Dummy promo code logic
+    if (promoCode.trim().toLowerCase() === "save10") {
+      setAppliedPromo({ code: "SAVE10", discount: 0.1 }); // 10% discount
+      setPromoError("");
+      toast.success("Promo code applied!");
+    } else {
+      setAppliedPromo(null);
+      setPromoError("Invalid promo code.");
+      toast.error("Promo code not valid.");
+    }
   };
 
   const saveNotes = async (productId) => {
@@ -68,112 +85,130 @@ export default function Cart() {
 
   const deleteCartItem = async (productId) => {
     const { error } = await supabase
-      .from('profiles_products')
+      .from("profiles_products")
       .delete()
-      .eq('product_id', productId)
-      .eq('profile_id', user.id);
+      .eq("product_id", productId)
+      .eq("profile_id", user.id);
 
     if (error) {
-      console.error('Error deleting:', error);
+      console.error("Error deleting:", error);
     } else {
       getCartItems();
     }
   };
 
   const removeLocalCartItem = (productId) => {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const updatedCart = cart.filter(item => item.id !== productId);
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const updatedCart = cart.filter((item) => item.id !== productId);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
     setCartItems(updatedCart);
   };
 
-const isValidEmail = (email) => {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-};
+  const isValidEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
 
-const isValidPhone = (phone) => {
-  return /^[\d+\s\-().]{7,}$/.test(phone); // Allows common phone formats
-};
+  const isValidPhone = (phone) => {
+    return /^[\d+\s\-().]{7,}$/.test(phone); // Allows common phone formats
+  };
 
-const checkout = async () => {
-  if (!loggedIn) {
-    const { value: formValues } = await Swal.fire({
-      title: 'Contact Information',
-      html:
-        `<input id="swal-input1" class="swal2-input" placeholder="Email (optional)">` +
-        `<input id="swal-input2" class="swal2-input" placeholder="Phone Number (optional)">`,
-      focusConfirm: false,
-      showCancelButton: true,
-      confirmButtonText: 'Submit',
-      preConfirm: () => {
-        const email = document.getElementById('swal-input1').value.trim();
-        const phone = document.getElementById('swal-input2').value.trim();
+  const checkout = async () => {
+    if (!loggedIn) {
+      const { value: formValues } = await Swal.fire({
+        title: "Contact Information",
+        html:
+          `<input id="swal-input1" class="swal2-input" placeholder="Email (optional)">` +
+          `<input id="swal-input2" class="swal2-input" placeholder="Phone Number (optional)">`,
+        focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonText: "Submit",
+        preConfirm: () => {
+          const email = document.getElementById("swal-input1").value.trim();
+          const phone = document.getElementById("swal-input2").value.trim();
 
-        if (!email && !phone) {
-          Swal.showValidationMessage("Please enter at least one contact method.");
-          return false;
-        }
+          if (!email && !phone) {
+            Swal.showValidationMessage(
+              "Please enter at least one contact method."
+            );
+            return false;
+          }
 
-        if (email && !isValidEmail(email)) {
-          Swal.showValidationMessage("Please enter a valid email address.");
-          return false;
-        }
+          if (email && !isValidEmail(email)) {
+            Swal.showValidationMessage("Please enter a valid email address.");
+            return false;
+          }
 
-        if (phone && !isValidPhone(phone)) {
-          Swal.showValidationMessage("Please enter a valid phone number.");
-          return false;
-        }
+          if (phone && !isValidPhone(phone)) {
+            Swal.showValidationMessage("Please enter a valid phone number.");
+            return false;
+          }
 
-        return { email, phone };
-      }
-    });
+          return { email, phone };
+        },
+      });
 
-    if (!formValues) return;
+      if (!formValues) return;
 
-    const { email, phone } = formValues;
+      const { email, phone } = formValues;
+
+      const orderDetails = {
+        name: "Guest",
+        email,
+        phone,
+        items: cartItems,
+      };
+
+      await sendOrderEmail(orderDetails);
+      toast.success("Inquiry sent!");
+      return;
+    }
 
     const orderDetails = {
-      name: "Guest",
-      email,
-      phone,
+      name: user.user_metadata.full_name || "Guest",
+      email: user.email,
       items: cartItems,
     };
 
     await sendOrderEmail(orderDetails);
     toast.success("Inquiry sent!");
-    return;
-  }
-
-  const orderDetails = {
-    name: user.user_metadata.full_name || "Guest",
-    email: user.email,
-    items: cartItems,
   };
-
-  await sendOrderEmail(orderDetails);
-  toast.success("Inquiry sent!");
-};
-
 
   return (
     <Fragment>
       <Container>
         <div className="row">
-          <h1 className="px-5 text-center mt-4" style={{ fontFamily: "Righteous" }}>My Cart</h1>
-          <h5 className="px-5 text-center mt-4" style={{ fontFamily: "Righteous" }}>
-            Review the items you’re interested in and submit an inquiry for pricing or more details.
+          <h1
+            className="px-5 text-center mt-4"
+            style={{ fontFamily: "Righteous" }}
+          >
+            My Cart
+          </h1>
+          <h5
+            className="px-5 text-center mt-4"
+            style={{ fontFamily: "Righteous" }}
+          >
+            Review the items you’re interested in and submit an inquiry for
+            pricing or more details.
           </h5>
 
           {cartItems && cartItems.length !== 0 ? (
             <div className="row mt-3 px-4 px-lg-5">
               <div className="col-12 col-lg-7">
                 {cartItems.map((c, index) => (
-                  <div className="d-flex flex-wrap mb-3 p-3 border rounded position-relative" style={{ minHeight: "200px" }} key={c.id || index}>
+                  <div
+                    className="d-flex flex-wrap mb-3 p-3 border rounded position-relative"
+                    style={{ minHeight: "200px" }}
+                    key={c.id || index}
+                  >
                     <div className="col-12 col-md-4 d-flex align-items-center justify-content-center">
                       <img
                         src={loggedIn ? c.products.image_url : c.image_url}
                         alt={loggedIn ? c.products.name : c.name}
-                        style={{ maxWidth: "100%", maxHeight: "150px", objectFit: "contain" }}
+                        style={{
+                          maxWidth: "100%",
+                          maxHeight: "150px",
+                          objectFit: "contain",
+                        }}
                       />
                     </div>
                     <div className="col-12 col-md-8 pt-3 pt-md-0 ps-md-4 d-flex flex-column justify-content-between">
@@ -186,7 +221,9 @@ const checkout = async () => {
                             <div className="mt-2">Additional Notes</div>
                             <textarea
                               value={c.notes || ""}
-                              onChange={(e) => handleNotesChange(c.product_id, e.target.value)}
+                              onChange={(e) =>
+                                handleNotesChange(c.product_id, e.target.value)
+                              }
                               placeholder="Add notes here..."
                               rows={3}
                               className="form-control"
@@ -204,7 +241,11 @@ const checkout = async () => {
                       </div>
                     </div>
                     <CloseButton
-                      style={{ position: "absolute", top: "10px", right: "10px" }}
+                      style={{
+                        position: "absolute",
+                        top: "10px",
+                        right: "10px",
+                      }}
                       onClick={() =>
                         loggedIn
                           ? deleteCartItem(c.product_id)
@@ -228,9 +269,37 @@ const checkout = async () => {
                   ))}
                   <hr />
                   <div className="d-flex justify-content-between fw-bold">
-                    <div>Total</div>
+                    {/* <div>Total</div> */}
                     <div>-</div>
                   </div>
+                  <div className="mb-3">
+                    <label htmlFor="promoCode" className="form-label">
+                      Promo Code
+                    </label>
+                    <div className="d-flex">
+                      <input
+                        id="promoCode"
+                        type="text"
+                        className="form-control me-2"
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value)}
+                        placeholder="Enter promo code"
+                      />
+                      <Button variant="secondary" onClick={handleApplyPromo}>
+                        Apply
+                      </Button>
+                    </div>
+                    {promoError && (
+                      <small className="text-danger">{promoError}</small>
+                    )}
+                    {appliedPromo && (
+                      <div className="text-success mt-2">
+                        Promo <strong>{appliedPromo.code}</strong> applied:{" "}
+                        {/* {appliedPromo.discount * 100}% off */}
+                      </div>
+                    )}
+                  </div>
+
                   <Button
                     variant="dark"
                     className="mt-4 w-100 py-2"

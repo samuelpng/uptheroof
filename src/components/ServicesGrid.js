@@ -35,6 +35,14 @@ const services = [
     button: "Explore"
   },
   {
+    image: "/images/flooring.png",
+    title: "Flooring Services",
+    description:
+      "We offer flooring services. Enquire to find out more",
+    link: "/contact-us",
+    button: "Contact Us"
+  },
+  {
     image: "/images/call.png",
     title: "Contact EJ Sports Singapore",
     description:
