@@ -34,7 +34,7 @@ const AboutUs = () => {
           </p>
         </Col>
       </Row>
-      <Row className="mb-4">
+      {/* <Row className="mb-4">
         <Col>
           <h4>Company Images</h4>
           <Row>
@@ -49,7 +49,7 @@ const AboutUs = () => {
             </Col>
           </Row>
         </Col>
-      </Row>
+      </Row> */}
       {/* Optional Team Section */}
       {/* <Row className="mb-4">
         <Col>
@@ -63,7 +63,7 @@ const AboutUs = () => {
         </Col>
       </Row> */}
       {/* Media Kit/Logos */}
-      <Row className="mb-4">
+      {/* <Row className="mb-4">
         <Col>
           <h4>Media Kit & Logos</h4>
           <Row>
@@ -78,7 +78,7 @@ const AboutUs = () => {
             </Col>
           </Row>
         </Col>
-      </Row>
+      </Row> */}
     </Container>
   );
 };

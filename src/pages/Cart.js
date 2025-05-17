@@ -1,9 +1,8 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { Container, Button, CloseButton } from "react-bootstrap";
+import { Container, Button, CloseButton, Form } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { supabase } from "../supabaseClient";
 import { useAuth } from "../contexts/AuthContext";
-import { sendOrderEmail } from "../utils/emailService";
 import Swal from "sweetalert2";
 
 export default function Cart() {
@@ -12,18 +11,31 @@ export default function Cart() {
   const [promoCode, setPromoCode] = useState("");
   const [appliedPromo, setAppliedPromo] = useState(null);
   const [promoError, setPromoError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("")
 
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
 
-  useEffect(() => {
-    if (user) {
-      setLoggedIn(true);
-      getCartItems();
-    } else {
-      setLoggedIn(false);
-      getLocalCartItems();
-    }
-  }, [user]);
+  const promoCodes = ["#SYOFF",
+    "#SGOFF",
+    "#KENOFF",
+    "#OOFF",
+    "#JOOFF",
+    "#SCHOFF",
+  ];
+
+useEffect(() => {
+  if (isLoading) return; // Wait for auth to be ready
+
+  if (user) {
+    setLoggedIn(true);
+    getCartItems();
+  } else {
+    setLoggedIn(false);
+    getLocalCartItems();
+    setLoading(false);
+  }
+}, [user, isLoading]);
 
   const getCartItems = async () => {
     const { data, error } = await supabase
@@ -37,6 +49,7 @@ export default function Cart() {
     }
 
     setCartItems(data);
+    setLoading(false)
   };
 
   const getLocalCartItems = () => {
@@ -52,10 +65,14 @@ export default function Cart() {
     );
   };
 
+  const handleMessageChange = (e) => {
+    setMessage(e.target.value);
+  };
+  
+
   const handleApplyPromo = () => {
-    // Dummy promo code logic
-    if (promoCode.trim().toLowerCase() === "save10") {
-      setAppliedPromo({ code: "SAVE10", discount: 0.1 }); // 10% discount
+    if (promoCode.trim().toUpperCase().includes(promoCode)) {
+      setAppliedPromo(promoCode); 
       setPromoError("");
       toast.success("Promo code applied!");
     } else {
@@ -65,21 +82,36 @@ export default function Cart() {
     }
   };
 
-  const saveNotes = async (productId) => {
-    const itemToSave = cartItems.find((item) => item.product_id === productId);
-    if (!itemToSave) return;
+  // const saveNotes = async (productId) => {
+  //   const itemToSave = cartItems.find((item) => item.product_id === productId);
+  //   if (!itemToSave) return;
 
+  //   const { error } = await supabase
+  //     .from("profiles_products")
+  //     .update({ notes: itemToSave.notes })
+  //     .eq("profile_id", user.id)
+  //     .eq("product_id", productId);
+
+  //   if (error) {
+  //     toast.error("Failed to update notes.");
+  //     console.error(error);
+  //   } else {
+  //     toast.success("Notes updated successfully!");
+  //   }
+  // };
+
+  const clearCart = async () => {
     const { error } = await supabase
-      .from("profiles_products")
-      .update({ notes: itemToSave.notes })
-      .eq("profile_id", user.id)
-      .eq("product_id", productId);
-
+      .from('profiles_products')
+      .delete()
+      .eq('profile_id', user.id);
+  
     if (error) {
-      toast.error("Failed to update notes.");
-      console.error(error);
+      console.error("Error clearing cart:", error);
+      toast.error("Failed to clear cart after order.");
     } else {
-      toast.success("Notes updated successfully!");
+      setCartItems([]);
+      toast.success("Cart cleared successfully!");
     }
   };
 
@@ -113,65 +145,138 @@ export default function Cart() {
   };
 
   const checkout = async () => {
-    if (!loggedIn) {
-      const { value: formValues } = await Swal.fire({
-        title: "Contact Information",
-        html:
-          `<input id="swal-input1" class="swal2-input" placeholder="Email (optional)">` +
-          `<input id="swal-input2" class="swal2-input" placeholder="Phone Number (optional)">`,
-        focusConfirm: false,
-        showCancelButton: true,
-        confirmButtonText: "Submit",
-        preConfirm: () => {
-          const email = document.getElementById("swal-input1").value.trim();
-          const phone = document.getElementById("swal-input2").value.trim();
+  // Normalize cart items to have consistent product info
+  const normalizedCart = cartItems.map(item => ({
+    product_id: item.products?.id || item.product_id || item.id,
+    quantity: item.quantity || 1,
+    // add more fields if needed, e.g. price
+  }));
 
-          if (!email && !phone) {
-            Swal.showValidationMessage(
-              "Please enter at least one contact method."
-            );
-            return false;
-          }
+  if (normalizedCart.length === 0) {
+    toast.error("Your cart is empty!");
+    return;
+  }
 
-          if (email && !isValidEmail(email)) {
-            Swal.showValidationMessage("Please enter a valid email address.");
-            return false;
-          }
+  if (!loggedIn) {
+    const { value: formValues } = await Swal.fire({
+      title: "Contact Information",
+      html:
+        `<input id="swal-input1" class="swal2-input" placeholder="Email">` +
+        `<input id="swal-input2" class="swal2-input" placeholder="Name (optional)">` +
+        `<input id="swal-input3" class="swal2-input" placeholder="Phone Number (optional)">`,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: "Submit",
+      preConfirm: () => {
+        const email = document.getElementById("swal-input1").value.trim();
+        const name = document.getElementById("swal-input2").value.trim();
+        const phone = document.getElementById("swal-input3").value.trim();
 
-          if (phone && !isValidPhone(phone)) {
-            Swal.showValidationMessage("Please enter a valid phone number.");
-            return false;
-          }
+        if (!email && !phone) {
+          Swal.showValidationMessage("Please enter at least one contact method.");
+          return false;
+        }
 
-          return { email, phone };
-        },
-      });
+        if (email && !isValidEmail(email)) {
+          Swal.showValidationMessage("Please enter a valid email address.");
+          return false;
+        }
 
-      if (!formValues) return;
+        if (phone && !isValidPhone(phone)) {
+          Swal.showValidationMessage("Please enter a valid phone number.");
+          return false;
+        }
 
-      const { email, phone } = formValues;
+        return { email, name, phone };
+      },
+    });
 
-      const orderDetails = {
-        name: "Guest",
-        email,
-        phone,
-        items: cartItems,
-      };
+    if (!formValues) return;
+    
+    const { email, name, phone } = formValues;
 
-      await sendOrderEmail(orderDetails);
-      toast.success("Inquiry sent!");
-      return;
-    }
-
-    const orderDetails = {
-      name: user.user_metadata.full_name || "Guest",
-      email: user.email,
-      items: cartItems,
+    const orderPayload = {
+      contact_name: name || "Guest",
+      contact_email: email,
+      contact_phone: phone,
+      message: message,
+      promo_code: promoCode
     };
 
-    await sendOrderEmail(orderDetails);
-    toast.success("Inquiry sent!");
-  };
+    try {
+      // Insert order
+      const { data: order, error: orderError } = await supabase
+        .from("orders")
+        .insert(orderPayload)
+        .select()
+        .single();
+
+      if (orderError) throw orderError;
+
+      // Insert order items
+      const itemsPayload = normalizedCart.map(item => ({
+        order_id: order.id,
+        product_id: item.product_id,
+        quantity: item.quantity,
+      }));
+
+      const { error: itemsError } = await supabase
+        .from("order_items")
+        .insert(itemsPayload);
+
+      if (itemsError) throw itemsError;
+
+      toast.success("Order saved successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong. Please try again.");
+    }
+  } else {
+    // Logged in user checkout flow here (if any)
+    // For example, same order insertion with user info from `user`
+    try {
+      const orderPayload = {
+        profile_id: user.id,
+        contact_name: user.user_metadata?.full_name || user.email,
+        contact_email: user.email,
+        contact_phone: user.user_metadata?.phone || null,
+        message: message,
+        promo_code: promoCode
+      };
+
+      const { data: order, error: orderError } = await supabase
+        .from("orders")
+        .insert(orderPayload)
+        .select()
+        .single();
+
+      if (orderError) throw orderError;
+      const itemsPayload = normalizedCart.map(item => ({
+        order_id: order.id,
+        product_id: item.product_id,
+        // quantity: item.quantity,
+      }));
+
+      const { error: itemsError } = await supabase
+        .from("order_items")
+        .insert(itemsPayload);
+
+      if (itemsError) throw itemsError;
+
+      clearCart();
+
+      toast.success("Order saved successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong. Please try again.");
+    }
+  }
+};
+
+
+  if (loading) {
+    return <></>
+  }
 
   return (
     <Fragment>
@@ -218,7 +323,7 @@ export default function Cart() {
                         </h4>
                         {loggedIn && (
                           <Fragment>
-                            <div className="mt-2">Additional Notes</div>
+                            {/* <div className="mt-2">Additional Notes</div>
                             <textarea
                               value={c.notes || ""}
                               onChange={(e) =>
@@ -235,7 +340,7 @@ export default function Cart() {
                               onClick={() => saveNotes(c.product_id)}
                             >
                               Save
-                            </Button>
+                            </Button> */}
                           </Fragment>
                         )}
                       </div>
@@ -298,6 +403,12 @@ export default function Cart() {
                         {/* {appliedPromo.discount * 100}% off */}
                       </div>
                     )}
+                  </div>
+                  <div>
+                    <Form.Group controlId="message" className="mb-3">
+                      <Form.Label>Message</Form.Label>
+                      <Form.Control as="textarea" rows={4} name="message" value={message} onChange={handleMessageChange} required />
+                    </Form.Group>
                   </div>
 
                   <Button

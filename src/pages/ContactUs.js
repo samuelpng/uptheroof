@@ -64,7 +64,7 @@ const ContactUs = () => {
               <Form.Label>Message</Form.Label>
               <Form.Control as="textarea" rows={4} name="message" value={formData.message} onChange={handleChange} required />
             </Form.Group>
-            <Button variant="primary" type="submit">Send Message</Button>
+            <Button variant="primary" type="submit" disabled>Send Message</Button>
           </Form>
           {status && <p className="mt-3">{status}</p>}
         </Col>
