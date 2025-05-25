@@ -12,11 +12,11 @@ const AdminLogin = () => {
   const { login, isAdmin } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(()=>{
-    if (isAdmin) {
-      navigate("/admin/list")
-    }
-  },[])
+  // useEffect(()=>{
+  //   if (isAdmin) {
+  //     navigate("/admin/list")
+  //   }
+  // },[isAdmin])
 
   const handleLogin = async (e) => {
     e.preventDefault();
