@@ -32,6 +32,8 @@ import ProductPage from "./pages/ProductPage";
 import Portfolio from "./pages/Portfolio";
 import Footer from "./components/Footer";
 import Napfa from "./pages/napfa";
+import AdminRoute from "./components/AdminRoutes";
+import AdminLogin from "./pages/admin/AdminLogin";
 
 function App() {
   return (
@@ -75,24 +77,13 @@ function App() {
                         <Route path="portfolio" element={<Portfolio />} />
                         <Route path="/napfa" element={<Napfa />}/>
                         {/* <AuthProvider> */}
-                        <Route path="/admin/*">
-                          {/* <Route path="dashboard" element={<Dashboard />} /> */}
+                        <Route path="/admin" element={<AdminRoute />}>
+                          <Route path ="" element={<AdminLogin />} />
                           <Route path="create" element={<AdminCreate />} />
-                          <Route
-                            path="create-sport"
-                            element={<AdminAddSport />}
-                          />
-                          <Route
-                            path="create-categories"
-                            element={<AdminAddCategories />}
-                          />
+                          <Route path="create-sport" element={<AdminAddSport />} />
+                          <Route path="create-categories" element={<AdminAddCategories />} />
                           <Route path="list" element={<AdminList />} />
-                          <Route
-                            path="edit/:productId"
-                            element={<AdminEditProduct />}
-                          />
-                          {/* <Route path="orders" element={<Orders />} />
-                <Route path="users" element={<Users />} /> */}
+                          <Route path="edit/:productId" element={<AdminEditProduct />} />
                         </Route>
                         {/* </AuthProvider> */}
                       </Routes>

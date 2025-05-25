@@ -1,38 +1,90 @@
-import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import { supabase } from "../../supabaseClient";
 
 const AdminLogin = () => {
-  const { login, signup } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const { login, isAdmin } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
-    try {
-      await login(email, password);
-      navigate("/dashboard");
-    } catch (error) {
-      alert(error.message);
+  useEffect(()=>{
+    if (isAdmin) {
+      navigate("/admin/list")
     }
-  };
+  },[])
 
-  const handleSignup = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMsg("");
+
     try {
-      await signup(email, password);
-      alert("Signup successful! Check your email.");
-    } catch (error) {
-      alert(error.message);
+      // Login the user first
+      await login(email, password);
+
+      // Get the user session again
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error || !session?.user) throw new Error("Unable to get session");
+
+      // Check profile role from 'profiles' table
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", session.user.id)
+        .single();
+
+      if (profileError) throw new Error("Failed to fetch profile");
+
+      if (profile.role !== "admin") {
+        setErrorMsg("You are not authorized to access the admin panel.");
+        return;
+      }
+
+      // Success, redirect to admin dashboard or list
+      navigate("/admin/list");
+    } catch (err) {
+      setErrorMsg(err.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-      <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-      <button onClick={handleLogin}>Login</button>
-      <button onClick={handleSignup}>Sign Up</button>
+    <div className="container mt-5" style={{ maxWidth: "400px" }}>
+      <h3 className="mb-3">Admin Login</h3>
+      {errorMsg && <div className="alert alert-danger">{errorMsg}</div>}
+      <form onSubmit={handleLogin}>
+        <div className="mb-3">
+          <label>Email</label>
+          <input
+            type="email"
+            className="form-control"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label>Password</label>
+          <input
+            type="password"
+            className="form-control"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+
+        <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+          {loading ? "Logging in..." : "Login as Admin"}
+        </button>
+      </form>
     </div>
   );
 };

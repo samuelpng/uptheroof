@@ -144,16 +144,6 @@ export default function AdminEditProduct() {
 
   const editProduct = async () => {
     validateForm()
-
-    // Wait for images to finish uploading before proceeding
-    // const uploadedUrls = await uploadToSupabase(); 
-
-    // console.log("uploaded image", uploadedUrls);
-
-    // if (!uploadedUrls || uploadedUrls.length === 0) {
-    //     console.error("No images uploaded!");
-    //     return;
-    // }
     
     const { data, error } = await supabase
       .from("products")
@@ -213,42 +203,14 @@ export default function AdminEditProduct() {
         .eq("product_id", productId);
     }
 
-    // if (error2) {
-    //   console.error("Error inserting categories:", error2);
-    // } else {
-    //   console.log("Successfully inserted categories:", data2);
-    // }
-
-    //product created successfully, alert user
-    // Swal.fire({
-    //     title: `${formData.name} successfully created`,
-    //     icon: "success",
-    //     draggable: true
-    //   });
     Swal.fire({
-        title: `${formData.name} successfully created`,
-        icon: "success",
-        // html: `
-        //   <img src="${uploadedUrls[0]}" alt="Preview" style="width: 100px; border-radius: 5px;" />
-        // `,
-        showCloseButton: true,
-        showCancelButton: true,
-        focusConfirm: false,
-        confirmButtonText: "Add another Product",
-        confirmButtonAriaLabel: "Add another Product",
-        cancelButtonText: "Back to Home screen",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // Action when "Add another Product" button is clicked
-          console.log("User wants to add another product");
-          // For example, reset form fields:
-          reset()
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-          // Action when "Back to Home screen" button is clicked
-          console.log("User is going back to home screen");
-          navigate("/admin/list"); // Redirect user to home screen
-        }
-      });
+      title: `${formData.name} successfully created`,
+      icon: "success",
+      confirmButtonText: "Back to Home screen",
+    }).then(() => {
+      navigate("/admin/list");
+    });
+    
       
       
     reset();

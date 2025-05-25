@@ -6,6 +6,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true); 
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
     const fetchAuthState = async () => {
@@ -13,6 +14,22 @@ export const AuthProvider = ({ children }) => {
       const { data, error } = await supabase.auth.getSession();
       if (data?.session) {
         setUser(data.session.user);
+        //get user profile from data.session.user
+        const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", data.session.user.id)
+        .single();
+
+      if (profileError) {
+        console.error("Failed to fetch profile:", profileError.message);
+      } else {
+        // You can store the role or full profile in a separate state if needed
+        console.log("User profile:", profile);
+        if (profile && profile.role === "admin"){
+          setIsAdmin(true)
+        }
+      }
       } else {
         setUser(null);
       }
@@ -81,7 +98,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, signInWithGoogle, isLoading }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, signInWithGoogle, isLoading, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );

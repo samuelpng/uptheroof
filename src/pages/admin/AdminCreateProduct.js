@@ -176,12 +176,11 @@ export default function AdminCreate() {
       }).then((result) => {
         if (result.isConfirmed) {
           // Action when "Add another Product" button is clicked
-          console.log("User wants to add another product");
           // For example, reset form fields:
           reset()
+          window.location.reload();
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           // Action when "Back to Home screen" button is clicked
-          console.log("User is going back to home screen");
           navigate("/admin/list"); // Redirect user to home screen
         }
       });
