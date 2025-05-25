@@ -78,7 +78,7 @@ function App() {
                         <Route path="/napfa" element={<Napfa />}/>
                         {/* <AuthProvider> */}
                         <Route path="/admin" element={<AdminRoute />}>
-                          <Route path ="" element={<AdminLogin />} />
+                          {/* <Route path="login" element={<AdminLogin />} />  */}
                           <Route path="create" element={<AdminCreate />} />
                           <Route path="create-sport" element={<AdminAddSport />} />
                           <Route path="create-categories" element={<AdminAddCategories />} />

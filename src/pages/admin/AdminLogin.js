@@ -1,92 +1,151 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import { supabase } from "../../supabaseClient";
+// import { Fragment, useState, useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
+// import { Container, Form, Button } from "react-bootstrap";
+// import Swal from "sweetalert2";
+// import { useAuth } from "../../contexts/AuthContext";
+// import { supabase } from "../../supabaseClient";
 
-const AdminLogin = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
-  const [loading, setLoading] = useState(false);
+// export default function Login() {
+//   const { login } = useAuth();
+//   const navigate = useNavigate();
+//   const [formData, setFormData] = useState({ email: "", password: "" });
 
-  const { login, isAdmin } = useAuth();
-  const navigate = useNavigate();
+//   const updateFormField = (e) => {
+//     setFormData({
+//       ...formData,
+//       [e.target.name]: e.target.value,
+//     });
+//   };
 
-  // useEffect(()=>{
-  //   if (isAdmin) {
-  //     navigate("/admin/list")
-  //   }
-  // },[isAdmin])
+//   const handleLogin = async () => {
+//     const { email, password } = formData;
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setErrorMsg("");
+//     const response = await login(email, password);
+//     console.log("login =>", response);
 
-    try {
-      // Login the user first
-      await login(email, password);
+//     if (response?.error) {
+//       Swal.fire("Error", response.error.message, "error");
+//     } else {
+//       Swal.fire("Success!", "You are now logged in.", "success");
+//       navigate("/");
+//     }
+//   };
 
-      // Get the user session again
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error || !session?.user) throw new Error("Unable to get session");
+//   const handleForgotPassword = async () => {
+//     const { value: email } = await Swal.fire({
+//       title: "Reset Password",
+//       input: "email",
+//       inputLabel: "Enter your email",
+//       inputPlaceholder: "example@email.com",
+//       showCancelButton: true,
+//       confirmButtonText: "Send Reset Link",
+//     });
 
-      // Check profile role from 'profiles' table
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", session.user.id)
-        .single();
+//     if (email) {
+//       const { error } = await supabase.auth.resetPasswordForEmail(email, {
+//         redirectTo: "http://ejspports.com.sg/login", // Change for prod!
+//       });
 
-      if (profileError) throw new Error("Failed to fetch profile");
+//       if (error) {
+//         Swal.fire("Error", error.message, "error");
+//       } else {
+//         Swal.fire("Success!", "A password reset link has been sent to your email.", "success");
+//       }
+//     }
+//   };
 
-      if (profile.role !== "admin") {
-        setErrorMsg("You are not authorized to access the admin panel.");
-        return;
-      }
+//   const handleGoogleLogin = async () => {
+//     const { error } = await supabase.auth.signInWithOAuth({
+//       provider: "google",
+//     });
 
-      // Success, redirect to admin dashboard or list
-      navigate("/admin/list");
-    } catch (err) {
-      setErrorMsg(err.message || "Login failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+//     if (error) {
+//       Swal.fire("Error", error.message, "error");
+//     }
+//   };
 
-  return (
-    <div className="container mt-5" style={{ maxWidth: "400px" }}>
-      <h3 className="mb-3">Admin Login</h3>
-      {errorMsg && <div className="alert alert-danger">{errorMsg}</div>}
-      <form onSubmit={handleLogin}>
-        <div className="mb-3">
-          <label>Email</label>
-          <input
-            type="email"
-            className="form-control"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
+//   useEffect(() => {
+//     const checkPasswordReset = async () => {
+//       const { data } = await supabase.auth.getSession();
+//       if (data?.session?.user) {
+//         const { value: newPassword } = await Swal.fire({
+//           title: "Reset Your Password",
+//           input: "password",
+//           inputLabel: "Enter new password",
+//           inputPlaceholder: "New password",
+//           inputAttributes: { type: "password" },
+//           showCancelButton: false,
+//           confirmButtonText: "Update Password",
+//         });
 
-        <div className="mb-3">
-          <label>Password</label>
-          <input
-            type="password"
-            className="form-control"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
+//         if (newPassword) {
+//           const { error } = await supabase.auth.updateUser({ password: newPassword });
 
-        <button type="submit" className="btn btn-primary w-100" disabled={loading}>
-          {loading ? "Logging in..." : "Login as Admin"}
-        </button>
-      </form>
-    </div>
-  );
-};
+//           if (error) {
+//             Swal.fire("Error", error.message, "error");
+//           } else {
+//             Swal.fire("Success!", "Your password has been updated. Please log in.", "success");
+//             await supabase.auth.signOut();
+//           }
+//         }
+//       }
+//     };
 
-export default AdminLogin;
+//     checkPasswordReset();
+//   }, []);
+
+//   return (
+//     <Fragment>
+//       <Container>
+//         <div className="row justify-content-center mt-5">
+//           <div className="col-md-6 col-lg-5 p-4 shadow-sm border rounded bg-white">
+//             <h2 className="text-center mb-4">Sign In</h2>
+
+//             <Form>
+//               <Form.Group className="mb-3">
+//                 <Form.Control
+//                   type="email"
+//                   name="email"
+//                   placeholder="Email"
+//                   value={formData.email}
+//                   onChange={updateFormField}
+//                 />
+//               </Form.Group>
+
+//               <Form.Group className="mb-3">
+//                 <Form.Control
+//                   type="password"
+//                   name="password"
+//                   placeholder="Password"
+//                   value={formData.password}
+//                   onChange={updateFormField}
+//                 />
+//               </Form.Group>
+
+//               <div className="d-grid mb-3">
+//                 <Button variant="primary" onClick={handleLogin}>
+//                   Sign In
+//                 </Button>
+//               </div>
+
+//               {/* <div className="d-grid mb-3">
+//                 <Button variant="outline-dark" onClick={handleGoogleLogin}>
+//                   Sign In with Google
+//                 </Button>
+//               </div> */}
+//             </Form>
+
+//             <p className="text-center mt-3">
+//               Don’t have an account? <a href="/register">Register</a>
+//             </p>
+//             <p className="text-center">
+//               <a onClick={handleForgotPassword} style={{ cursor: "pointer" }}>
+//                 Forgot password?
+//               </a>
+//             </p>
+//           </div>
+//         </div>
+//       </Container>
+//     </Fragment>
+//   );
+// }

@@ -9,7 +9,7 @@ const AdminRoute = () => {
 
   if (!user) return <Navigate to="/admin" />;
   
-  if (!isAdmin) return <Navigate to="/admin" />; // Or a custom "Not authorized" page
+  if (!isAdmin) return <Navigate to="/login" />; // Or a custom "Not authorized" page
 
   return <Outlet />;
 };

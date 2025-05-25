@@ -21,12 +21,12 @@ export default function Login() {
     const { email, password } = formData;
 
     const response = await login(email, password);
-    console.log("login =>", response);
 
     if (response?.error) {
       Swal.fire("Error", response.error.message, "error");
     } else {
       Swal.fire("Success!", "You are now logged in.", "success");
+
       navigate("/");
     }
   };
@@ -43,7 +43,7 @@ export default function Login() {
 
     if (email) {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: "http://localhost:3000/login", // Change for prod!
+        redirectTo: "https://ejsports.com.sg/login", // Change for prod!
       });
 
       if (error) {
