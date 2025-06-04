@@ -18,6 +18,7 @@ export default function Login() {
   };
 
   const handleLogin = async () => {
+    console.log('hey')
     const { email, password } = formData;
 
     const response = await login(email, password);
@@ -26,8 +27,15 @@ export default function Login() {
       Swal.fire("Error", response.error.message, "error");
     } else {
       Swal.fire("Success!", "You are now logged in.", "success");
-
-      navigate("/");
+      console.log('email')
+      console.log(email)
+      if (email === "ejadmin@email.com"){
+        Swal.fire("Success!", "You are now logged in as admin.", "success");
+        navigate("/admin/list");
+      }else {
+        navigate("/");
+      }
+      
     }
   };
 
@@ -64,35 +72,35 @@ export default function Login() {
     }
   };
 
-  useEffect(() => {
-    const checkPasswordReset = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (data?.session?.user) {
-        const { value: newPassword } = await Swal.fire({
-          title: "Reset Your Password",
-          input: "password",
-          inputLabel: "Enter new password",
-          inputPlaceholder: "New password",
-          inputAttributes: { type: "password" },
-          showCancelButton: false,
-          confirmButtonText: "Update Password",
-        });
+  // useEffect(() => {
+  //   const checkPasswordReset = async () => {
+  //     const { data } = await supabase.auth.getSession();
+  //     if (data?.session?.user) {
+  //       const { value: newPassword } = await Swal.fire({
+  //         title: "Reset Your Password",
+  //         input: "password",
+  //         inputLabel: "Enter new password",
+  //         inputPlaceholder: "New password",
+  //         inputAttributes: { type: "password" },
+  //         showCancelButton: false,
+  //         confirmButtonText: "Update Password",
+  //       });
 
-        if (newPassword) {
-          const { error } = await supabase.auth.updateUser({ password: newPassword });
+  //       if (newPassword) {
+  //         const { error } = await supabase.auth.updateUser({ password: newPassword });
 
-          if (error) {
-            Swal.fire("Error", error.message, "error");
-          } else {
-            Swal.fire("Success!", "Your password has been updated. Please log in.", "success");
-            await supabase.auth.signOut();
-          }
-        }
-      }
-    };
+  //         if (error) {
+  //           Swal.fire("Error", error.message, "error");
+  //         } else {
+  //           Swal.fire("Success!", "Your password has been updated. Please log in.", "success");
+  //           await supabase.auth.signOut();
+  //         }
+  //       }
+  //     }
+  //   };
 
-    checkPasswordReset();
-  }, []);
+  //   checkPasswordReset();
+  // }, []);
 
   return (
     <Fragment>
