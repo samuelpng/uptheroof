@@ -34,6 +34,7 @@ import Footer from "./components/Footer";
 import Napfa from "./pages/napfa";
 import AdminRoute from "./components/AdminRoutes";
 import AdminLogin from "./pages/admin/AdminLogin";
+import AdminOrderList from "./pages/admin/AdminOrderList";
 
 function App() {
   return (
@@ -74,18 +75,19 @@ function App() {
                         <Route path="/stripe" element={<Stripe />} />
                         <Route path="/orders" element={<Orders />} />
                         <Route path="/contact-us" element={<ContactUs />}/>
-                        <Route path="portfolio" element={<Portfolio />} />
+                        <Route path="/portfolio" element={<Portfolio />} />
                         <Route path="/napfa" element={<Napfa />}/>
-                        {/* <AuthProvider> */}
+                        
+                        {/* Admin Routes */}
+                        <Route path="/admin/login" element={<AdminLogin />} />
                         <Route path="/admin" element={<AdminRoute />}>
-                          {/* <Route path="login" element={<AdminLogin />} />  */}
                           <Route path="create" element={<AdminCreate />} />
                           <Route path="create-sport" element={<AdminAddSport />} />
                           <Route path="create-categories" element={<AdminAddCategories />} />
                           <Route path="list" element={<AdminList />} />
                           <Route path="edit/:productId" element={<AdminEditProduct />} />
+                          <Route path="orders" element={<AdminOrderList />} />
                         </Route>
-                        {/* </AuthProvider> */}
                       </Routes>
                     </div>
                     <Footer />
