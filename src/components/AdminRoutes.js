@@ -7,7 +7,7 @@ const AdminRoute = () => {
 
   if (isLoading) return <div>Loading...</div>;
 
-  if (!user) return <Navigate to="/admin" />;
+  if (!user) return <Navigate to="/login" />;
   
   if (!isAdmin) return <Navigate to="/login" />; // Or a custom "Not authorized" page
 

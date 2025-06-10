@@ -50,24 +50,30 @@ export default function CustomerProvider(props) {
 
     const logout = async () => {
         if (localStorage.accessToken) {
-            let response = await axios.post(BASE_URL + '/customers/logout',
-                {
-                    refreshToken: localStorage.getItem('refreshToken')
-                },
-                {
-                    headers: {
-                        authorization: `Bearer ${localStorage.getItem('accessToken')}`
-                    }
-                })
+            try {
+                let response = await axios.post(BASE_URL + '/customers/logout',
+                    {
+                        refreshToken: localStorage.getItem('refreshToken')
+                    },
+                    {
+                        headers: {
+                            authorization: `Bearer ${localStorage.getItem('accessToken')}`
+                        }
+                    })
 
-            if (response.data.message) {
-                console.log(response.data.message)
-                localStorage.clear()
-                toast.success('Log out Successful')
-            }
+                if (response.data.message) {
+                    console.log(response.data.message)
+                    localStorage.clear()
+                    toast.success('Log out Successful')
+                    navigate('/')
+                }
 
-            if (response.data.error) {
-                console.log('error, token not found')
+                if (response.data.error) {
+                    console.log('error, token not found')
+                }
+            } catch (error) {
+                console.error("Error during logout:", error)
+                toast.error("Logout failed.")
             }
         }
     }
