@@ -14,24 +14,25 @@ export const AuthProvider = ({ children }) => {
       const { data, error } = await supabase.auth.getSession();
       if (data?.session) {
         setUser(data.session.user);
-        //get user profile from data.session.user
+        // Fetch profile and set isAdmin during initial load
         const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", data.session.user.id)
-        .single();
+          .from("profiles")
+          .select("*")
+          .eq("id", data.session.user.id)
+          .single();
 
-      if (profileError) {
-        console.error("Failed to fetch profile:", profileError.message);
-      } else {
-        // You can store the role or full profile in a separate state if needed
-        console.log("User profile:", profile);
-        if (profile && profile.role === "admin"){
-          setIsAdmin(true)
+        if (profileError) {
+          console.error("Failed to fetch profile on initial load:", profileError.message);
+        } else {
+          if (profile && profile.role === "admin") {
+            setIsAdmin(true);
+          } else {
+            setIsAdmin(false);
+          }
         }
-      }
       } else {
         setUser(null);
+        setIsAdmin(false);
       }
       setIsLoading(false);
     };
@@ -42,8 +43,10 @@ export const AuthProvider = ({ children }) => {
       (event, session) => {
         if (event === 'SIGNED_IN') {
           setUser(session.user);
+          fetchAuthState(); // Re-fetch auth state and isAdmin on sign-in
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
+          setIsAdmin(false);
         }
       }
     );
@@ -58,11 +61,34 @@ export const AuthProvider = ({ children }) => {
 
     if (error) {
       console.error("Login error:", error.message);
-      throw error; // Handle the error properly in UI
+      throw error; // Propagate error for UI handling
     }
 
-    console.log("User logged in:", data.session?.user);
-    setUser(data.session?.user); // Correct way to set user
+    const loggedInUser = data.session?.user;
+    setUser(loggedInUser); // Update user state
+
+    let userIsAdmin = false;
+    if (loggedInUser) {
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", loggedInUser.id)
+        .single();
+
+      if (profileError) {
+        console.error("Failed to fetch profile after login:", profileError.message);
+      } else {
+        if (profile && profile.role === "admin") {
+          setIsAdmin(true); // Update context's isAdmin state
+          userIsAdmin = true;
+        } else {
+          setIsAdmin(false); // Update context's isAdmin state
+        }
+      }
+    }
+
+    console.log("User logged in:", loggedInUser);
+    return { user: loggedInUser, isAdmin: userIsAdmin }; // Return admin status
   };
 
   const signup = async (email, password, fullName) => {
@@ -87,6 +113,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     await supabase.auth.signOut();
     setUser(null);
+    setIsAdmin(false); // Reset isAdmin on logout
   };
 
   const signInWithGoogle = async () => {

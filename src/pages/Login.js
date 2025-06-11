@@ -18,24 +18,22 @@ export default function Login() {
   };
 
   const handleLogin = async () => {
-    console.log('hey')
+    console.log('Attempting login...');
     const { email, password } = formData;
 
-    const response = await login(email, password);
+    try {
+      const { isAdmin } = await login(email, password);
 
-    if (response?.error) {
-      Swal.fire("Error", response.error.message, "error");
-    } else {
-      Swal.fire("Success!", "You are now logged in.", "success");
-      console.log('email')
-      console.log(email)
-      if (email === "ejadmin@email.com"){
+      if (isAdmin) {
         Swal.fire("Success!", "You are now logged in as admin.", "success");
         navigate("/admin/list");
-      }else {
+      } else {
+        Swal.fire("Success!", "You are now logged in.", "success");
         navigate("/");
       }
-      
+    } catch (error) {
+      console.error('Login error:', error.message);
+      Swal.fire("Error", error.message, "error");
     }
   };
 

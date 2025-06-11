@@ -115,9 +115,14 @@ const AdminProductList = () => {
         <h1 className="text-center" style={{ fontFamily: "Righteous" }}>
           Manage Products
         </h1>
-        <button className="btn btn-dark" onClick={() => navigate("/admin/create")}>
-          <FaPlus /> Create New
-        </button>
+        <div>
+          <button className="btn btn-info me-2" onClick={() => navigate("/admin/orders")}>
+            Manage Orders
+          </button>
+          <button className="btn btn-dark" onClick={() => navigate("/admin/create")}>
+            <FaPlus /> Create New
+          </button>
+        </div>
       </div>
 
       <div className="d-flex gap-2 mb-3">
