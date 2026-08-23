@@ -2,7 +2,7 @@ import { Fragment, useContext, useState, useEffect } from "react";
 import '../App.css';
 import ProductsContext from '../contexts/ProductsContext';
 import { Container, Button, Offcanvas, Form, Accordion, Pagination } from "react-bootstrap";
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import CardPlaceholder from "../components/CardPlaceholer";
 import ProductCard from "../components/ProductCard";
 import { supabase } from "../supabaseClient";
@@ -14,8 +14,9 @@ export default function ProductsListing() {
     const { categories } = useContext(CategoriesContext);
 
     const { sportsId, categoryId } = useParams();
+    const [searchParams] = useSearchParams();
 
-    const [globalSearch, setGlobalSearch] = useState('');
+    const [globalSearch, setGlobalSearch] = useState(() => searchParams.get('q') || '');
     const [sportSearch, setSportSearch] = useState([]);
     const [categorySearch, setCategorySearch] = useState([]);
     const [products, setProducts] = useState([]);
@@ -37,7 +38,7 @@ export default function ProductsListing() {
         setSportSearch(initialSportsFilter);
         setCategorySearch(initialCategoryFilter);
 
-        search(initialSportsFilter, initialCategoryFilter, 1);
+        search(initialSportsFilter, initialCategoryFilter, 1, searchParams.get('q') || '');
         setCurrentPage(1);
         setInitialLoad(true);
     }, [sportsId, categoryId]);
@@ -54,13 +55,30 @@ export default function ProductsListing() {
         }
     }, [currentPage]);
 
+    useEffect(() => {
+        const q = searchParams.get('q') || '';
+        setGlobalSearch(q);
+        if (initialLoad) {
+            setCurrentPage(1);
+            search(sportSearch, categorySearch, 1, q);
+        }
+    }, [searchParams]);
+
     const search = async (
         sportsFilter = sportSearch,
         categoriesFilter = categorySearch,
-        page = currentPage
+        page = currentPage,
+        nameFilter = globalSearch
     ) => {
         const from = (page - 1) * itemsPerPage;
         const to = from + itemsPerPage - 1;
+
+        const cleanSportsFilter = (sportsFilter || []).filter(Boolean);
+        const cleanCategoryFilter = (categoriesFilter || []).filter(Boolean);
+
+        const categoryRelation = cleanCategoryFilter.length > 0
+            ? `products_categories!inner(categories!inner(id, category_name))`
+            : `products_categories(categories(id, category_name))`;
 
         let query = supabase
             .from("products")
@@ -70,18 +88,13 @@ export default function ProductsListing() {
                 sport_id,
                 image_url,
                 sports(sport_name),
-                products_categories!inner(
-                    categories!inner(id, category_name)
-                )
+                ${categoryRelation}
             `, { count: "exact" })
             .range(from, to);
 
-        if (globalSearch) {
-            query = query.ilike("name", `%${globalSearch}%`);
+        if (nameFilter) {
+            query = query.ilike("name", `%${nameFilter}%`);
         }
-
-        const cleanSportsFilter = (sportsFilter || []).filter(Boolean);
-        const cleanCategoryFilter = (categoriesFilter || []).filter(Boolean);
 
         if (cleanSportsFilter.length > 0) {
             query = query.in("sport_id", cleanSportsFilter);

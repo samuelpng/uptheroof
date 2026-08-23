@@ -1,14 +1,17 @@
 import { useContext, useEffect, useState, Fragment } from "react";
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import CategoriesContext from "../contexts/CategoriesContext";
 import SportsContext from "../contexts/SportsContext";
 
 export default function NavBar() {
+  const navigate = useNavigate();
   const { sports, sportsLoading } = useContext(SportsContext);
   const { categories, categoriesLoading } = useContext(CategoriesContext);
 
   const [loggedIn, setLoggedIn] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { user, logout } = useAuth();
 
   const handleLogout = async () => {
@@ -29,6 +32,16 @@ export default function NavBar() {
     ? [...sports].sort((a, b) => a.sport_name.localeCompare(b.sport_name))
     : [];
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    const trimmed = searchQuery.trim();
+    if (trimmed) {
+      navigate(`/shop?q=${encodeURIComponent(trimmed)}`);
+    } else {
+      navigate("/shop");
+    }
+  };
+
   return (
     <Fragment>
       <div className="top-bar">
@@ -36,8 +49,13 @@ export default function NavBar() {
           <a href="/" className="logo">
             <img src="/images/sports-engineering-logo.png" alt="Company Logo" />
           </a>
-          <form className="search-bar">
-            <input type="text" placeholder="Search our catalog" />
+          <form className="search-bar" onSubmit={handleSearchSubmit}>
+            <input
+              type="text"
+              placeholder="Search our catalog"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </form>
           <NavDropdown
             title={
