@@ -116,6 +116,8 @@ export default function AdminCreate() {
           image_url: uploadedUrls[0] || null,
           image_url2: uploadedUrls[1] || null,
           image_url3: uploadedUrls[2] || null,
+          image_url4: uploadedUrls[3] || null,
+          image_url5: uploadedUrls[4] || null,
         },
       ])
       .select(); // Select returns the inserted row(s)

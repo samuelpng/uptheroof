@@ -40,6 +40,8 @@ export default function ProductPage() {
                 image_url,
                 image_url2,
                 image_url3,
+                image_url4,
+                image_url5,
                 sports(sport_name),
                 products_categories(categories(id, category_name))
             `
@@ -52,11 +54,16 @@ export default function ProductPage() {
     } else {
       setProduct(data);
 
-      setMainImage(data.image_url)
-      let images = [data.image_url];
-      if (data.image_url2) images.push(data.image_url2)
-      if (data.image_url3) images.push(data.image_url3)
-      setThumbnails(images)
+      const images = [
+        data.image_url,
+        data.image_url2,
+        data.image_url3,
+        data.image_url4,
+        data.image_url5,
+      ].filter(Boolean);
+
+      setMainImage(images[0] || "");
+      setThumbnails(images);
     }
   };
 

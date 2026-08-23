@@ -3,7 +3,9 @@ import { useDropzone } from "react-dropzone";
 import Cropper from "react-easy-crop";
 import { Modal, Button } from "react-bootstrap";
 
-const ImageUploader = ({ images, onImageUpload }) => {
+const MAX_IMAGES = 5;
+
+const ImageUploader = ({ images, onImageUpload, maxImages = MAX_IMAGES }) => {
   const [croppingImage, setCroppingImage] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -11,7 +13,7 @@ const ImageUploader = ({ images, onImageUpload }) => {
   const [showModal, setShowModal] = useState(false);
 
   const onDrop = (acceptedFiles) => {
-    if (images.length >= 3) return; // Prevent adding more than 3 images
+    if (images.length >= maxImages) return;
 
     // Only process one file at a time for cropping
     const file = acceptedFiles[0];
@@ -91,9 +93,17 @@ const ImageUploader = ({ images, onImageUpload }) => {
       }}
     >
       <input {...getInputProps()} />
-      <p onClick={open} style={{ cursor: "pointer", color: "blue" }}>
+      <p
+        onClick={images.length >= maxImages ? undefined : open}
+        style={{
+          cursor: images.length >= maxImages ? "default" : "pointer",
+          color: images.length >= maxImages ? "gray" : "blue",
+        }}
+      >
         Drag & drop images here, or click here to select
+        {images.length >= maxImages && " (maximum reached)"}
       </p>
+      <p className="text-muted small mb-0">Up to {maxImages} images</p>
 
       {/* Image Previews Below the Text */}
       <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "10px" }}>
