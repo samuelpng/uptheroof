@@ -10,6 +10,13 @@ import Select from "react-select";
 import ImageUploader from "../../components/ImageUploader";
 import Swal from 'sweetalert2'
 
+const getSafeStoragePath = (originalName) => {
+  const extMatch = originalName.match(/\.([a-zA-Z0-9]+)$/);
+  const ext = extMatch ? extMatch[1].toLowerCase() : "jpg";
+  const uniqueId = `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+  return `5sa3j8_1/${uniqueId}.${ext}`;
+};
+
 export default function AdminCreate() {
   const context = useContext(CustomerContext);
   const navigate = useNavigate();
@@ -203,7 +210,7 @@ const uploadToSupabase = async () => {
     
     for (const item of images) {
         const file = item.file;
-        const fileName = `5sa3j8_1/${Date.now()}_${file.name}`;
+        const fileName = getSafeStoragePath(file.name);
 
         const { data, error } = await supabase.storage
             .from("EJsports") // Replace with your Supabase bucket name
