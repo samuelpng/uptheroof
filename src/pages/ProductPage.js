@@ -176,7 +176,16 @@ export default function ProductPage() {
             </p>
             <p><b>Sport:</b> {product.sports?.sport_name}</p>
             <p><b>Description:</b></p>
-            <p className="product-description mb-0">{product.description}</p>
+            {product.description && (
+              <div className="product-description mb-0">
+                {product.description.split("\n").map((line, index) => (
+                  <Fragment key={index}>
+                    {index > 0 && <br />}
+                    {line}
+                  </Fragment>
+                ))}
+              </div>
+            )}
             {/* <p className="small">
               Tax included. <a href="#">Shipping calculated at checkout</a>
             </p> */}
