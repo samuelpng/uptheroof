@@ -168,7 +168,8 @@ export default function ProductPage() {
                                 : 'No Categories'}
             </p>
             <p><b>Sport:</b> {product.sports?.sport_name}</p>
-            <p><b>Description:</b> <br /> {product.description}</p>
+            <p><b>Description:</b></p>
+            <p className="product-description mb-0">{product.description}</p>
             {/* <p className="small">
               Tax included. <a href="#">Shipping calculated at checkout</a>
             </p> */}

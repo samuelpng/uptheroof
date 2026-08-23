@@ -162,7 +162,7 @@ export default function Variants(props) {
                             <div className="d-grid mt-4 me-2">
                                 <Button variant="dark" className="rounded-0 py-2" type="button" onClick={addToCart}>ADD TO CART</Button>
                             </div>
-                            <div className="mt-4"> {product.description} </div>
+                            <div className="mt-4 product-description">{product.description}</div>
 
                             <Accordion className="mt-3">
                                 <Accordion.Item eventKey="0">
