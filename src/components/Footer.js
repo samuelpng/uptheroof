@@ -39,10 +39,14 @@ const Footer = () => {
 
           {/* Right Section - Contact Details */}
           <Col md={6} className="text-md-end mt-3 mt-md-0">
-            <p className="mb-1">3018 Bedok North Street 5, #06-09 Eastlink, Singapore 486132</p>
             <p className="mb-1">
-              <a href="mailto:ejsportseng@gmail.com" className="text-white">
-                ejsportseng@gmail.com
+              12 Tampines North Drive 4, #06-25,<br />
+              Stellar @ Tampines<br />
+              Singapore 529435
+            </p>
+            <p className="mb-1">
+              <a href="mailto:batam@ejsports.com.sg" className="text-white">
+                batam@ejsports.com.sg
               </a>
             </p>
             <p className="mb-3">(+65) 8444 2590</p>
