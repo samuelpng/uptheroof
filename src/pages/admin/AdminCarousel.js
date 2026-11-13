@@ -195,8 +195,8 @@ export default function AdminCarousel() {
             Manage Carousel
           </h1>
           <div>
-            <Button variant="secondary" className="me-2" onClick={() => navigate("/admin/list")}>
-              Back to Products
+            <Button variant="secondary" className="me-2" onClick={() => navigate("/admin")}>
+              Admin Home
             </Button>
             <Button variant="dark" onClick={openCreate}>
               <FaPlus /> Add Slide
