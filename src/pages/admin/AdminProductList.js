@@ -119,6 +119,9 @@ const AdminProductList = () => {
           <button className="btn btn-info me-2" onClick={() => navigate("/admin/orders")}>
             Manage Orders
           </button>
+          <button className="btn btn-secondary me-2" onClick={() => navigate("/admin/carousel")}>
+            Manage Carousel
+          </button>
           <button className="btn btn-dark" onClick={() => navigate("/admin/create")}>
             <FaPlus /> Create New
           </button>
