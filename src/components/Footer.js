@@ -7,7 +7,7 @@ const Footer = () => {
   return (
     <footer className="footer text-white py-4">
       <Container>
-        <Row>
+        <Row> 
           {/* Left Section - Links */}
           <Col md={6}>
             <Row>
