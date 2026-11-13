@@ -36,6 +36,7 @@ import AdminRoute from "./components/AdminRoutes";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminOrderList from "./pages/admin/AdminOrderList";
 import AdminCarousel from "./pages/admin/AdminCarousel";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 function App() {
   return (
@@ -82,6 +83,7 @@ function App() {
                         {/* Admin Routes */}
                         <Route path="/admin/login" element={<AdminLogin />} />
                         <Route path="/admin" element={<AdminRoute />}>
+                          <Route index element={<AdminDashboard />} />
                           <Route path="create" element={<AdminCreate />} />
                           <Route path="create-sport" element={<AdminAddSport />} />
                           <Route path="create-categories" element={<AdminAddCategories />} />

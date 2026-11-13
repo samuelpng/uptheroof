@@ -190,7 +190,7 @@ export default function AdminCreate() {
           window.location.reload();
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           // Action when "Back to Home screen" button is clicked
-          navigate("/admin/list"); // Redirect user to home screen
+          navigate("/admin");
         }
       });
       
