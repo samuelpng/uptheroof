@@ -76,30 +76,8 @@ export default function LandingPage() {
 
   return (
     <Fragment>
-      <div className="container">
-      <div >
-        <LandingCarousel />
-      </div>
-
-      
-
-      <div>
-        <ServicesGrid />
-        {/* <h1 className="text-center my-3" style={{fontFamily:"Righteous"}}>SHOP BY SPORT</h1>
-        <div className="row ">
-          <a className="col-md-4 p-3" href="/shop/3">
-            <img src="/images/floorball.png" style={{ width: "100%" }}></img>
-          </a>
-          <a className="col-md-4 p-3" href="/shop/2">
-            <img src="/images/football.png" style={{ width: "100%" }}></img>
-          </a>
-          <a className="col-md-4 p-3" href="/shop/1">
-            <img src="/images/basketball.png" style={{ width: "100%" }}></img>
-          </a>
-        </div> */}
-      </div>
-      <div style={{ height: "40px" }}></div>
-      </div>
+      <LandingCarousel />
+      <ServicesGrid />
     </Fragment>
   )
 }

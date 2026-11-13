@@ -3,29 +3,30 @@ import { Container, Row, Col, Image, Card } from "react-bootstrap";
 
 const AboutUs = () => {
   return (
-    <Container className="py-5">
+    <Container className="site-section">
       <Row className="text-center mb-4">
         <Col>
-          <h2>About Us</h2>
+          <h2 className="section-title">About Us</h2>
         </Col>
       </Row>
+      <div className="page-panel mb-4">
       <Row className="mb-4">
         <Col md={6}>
           <h4>Mission</h4>
-          <p>
+          <p className="text-muted mb-0">
             To offer every sport quality equipment, excellent service, and
             creative solutions that bring out the best of athletes.
           </p>
         </Col>
         <Col md={6}>
           <h4>Vision</h4>
-          <p>Elevate Sports for Every Athlete, Everywhere.</p>
+          <p className="text-muted mb-0">Elevate Sports for Every Athlete, Everywhere.</p>
         </Col>
       </Row>
-      <Row className="mb-4">
+      <Row>
         <Col>
           <h4>Company Description</h4>
-          <p>
+          <p className="text-muted mb-0">
             Our company is experienced in solving complex sporting equipment
             issues and in representing our clients’ best interests. We have
             been providing our services to big events like SEA Games, Youth
@@ -34,6 +35,7 @@ const AboutUs = () => {
           </p>
         </Col>
       </Row>
+      </div>
       {/* <Row className="mb-4">
         <Col>
           <h4>Company Images</h4>
