@@ -32,16 +32,16 @@ const sections = [
   },
   {
     title: "Sports",
-    description: "Add sports used for product filtering.",
-    path: "/admin/create-sport",
-    button: "Add Sport",
+    description: "View, add, edit, and delete sports.",
+    path: "/admin/sports",
+    button: "Manage Sports",
     variant: "outline-dark",
   },
   {
     title: "Categories",
-    description: "Add categories used for product filtering.",
-    path: "/admin/create-categories",
-    button: "Add Category",
+    description: "View, add, edit, and delete categories.",
+    path: "/admin/categories",
+    button: "Manage Categories",
     variant: "outline-dark",
   },
 ];

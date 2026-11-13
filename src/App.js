@@ -86,7 +86,9 @@ function App() {
                           <Route index element={<AdminDashboard />} />
                           <Route path="create" element={<AdminCreate />} />
                           <Route path="create-sport" element={<AdminAddSport />} />
+                          <Route path="sports" element={<AdminAddSport />} />
                           <Route path="create-categories" element={<AdminAddCategories />} />
+                          <Route path="categories" element={<AdminAddCategories />} />
                           <Route path="list" element={<AdminList />} />
                           <Route path="edit/:productId" element={<AdminEditProduct />} />
                           <Route path="orders" element={<AdminOrderList />} />
