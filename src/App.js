@@ -35,6 +35,7 @@ import Napfa from "./pages/napfa";
 import AdminRoute from "./components/AdminRoutes";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminOrderList from "./pages/admin/AdminOrderList";
+import AdminCarousel from "./pages/admin/AdminCarousel";
 
 function App() {
   return (
@@ -87,6 +88,7 @@ function App() {
                           <Route path="list" element={<AdminList />} />
                           <Route path="edit/:productId" element={<AdminEditProduct />} />
                           <Route path="orders" element={<AdminOrderList />} />
+                          <Route path="carousel" element={<AdminCarousel />} />
                         </Route>
                       </Routes>
                     </div>
