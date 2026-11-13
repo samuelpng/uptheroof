@@ -75,12 +75,13 @@ export default function AdminOrderList() {
 
   return (
     <Fragment>
-      <Container className="mt-4">
-        <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+      <div className="admin-shell">
+      <Container>
+        <div className="admin-header">
           <h2 className="mb-0" style={{ fontFamily: "Righteous" }}>
             Order Management
           </h2>
-          <Button variant="secondary" onClick={() => navigate("/admin")}>
+          <Button variant="outline-secondary" onClick={() => navigate("/admin")}>
             Admin Home
           </Button>
         </div>
@@ -131,6 +132,7 @@ export default function AdminOrderList() {
           </Table>
         )}
       </Container>
+      </div>
     </Fragment>
   );
 }

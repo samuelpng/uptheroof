@@ -57,25 +57,29 @@ export default function NavBar() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </form>
-          <NavDropdown
-            title={
-              <span style={{ fontSize: "1.5rem", cursor: "pointer" }}>👤</span>
-            }
-            id="account-dropdown"
-            align="end"
-            className="icon-dropdown"
-          >
-            {loggedIn ? (
-              <NavDropdown.Item onClick={handleLogout}>
-                Log Out
-              </NavDropdown.Item>
-            ) : (
-              <NavDropdown.Item href="/login">Log In</NavDropdown.Item>
-            )}
-          </NavDropdown>
-          <a href="/cart" className="icon fs-4" title="View Cart">
-            🛒
-          </a>
+          <div className="d-flex align-items-center gap-3">
+            <NavDropdown
+              title={
+                <span style={{ fontSize: "1.35rem", cursor: "pointer" }} aria-label="Account">
+                  👤
+                </span>
+              }
+              id="account-dropdown"
+              align="end"
+              className="icon-dropdown"
+            >
+              {loggedIn ? (
+                <NavDropdown.Item onClick={handleLogout}>
+                  Log Out
+                </NavDropdown.Item>
+              ) : (
+                <NavDropdown.Item href="/login">Log In</NavDropdown.Item>
+              )}
+            </NavDropdown>
+            <a href="/cart" className="icon" title="View Cart" aria-label="Cart">
+              🛒
+            </a>
+          </div>
         </div>
       </div>
 

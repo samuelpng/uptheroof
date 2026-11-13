@@ -136,19 +136,21 @@ export default function ProductPage() {
 
   return (
     <Fragment>
-    <section className="bg-light">
-      <Container className="py-4">
+    <section className="site-section">
+      <Container>
       <Row className="g-4">
-        {/* Left Section (Images) */}
         <Col md={6}>
-          <div className="p-3 border rounded bg-light">
-            <Row className="flex-md-row flex-column">
-              {/* Main Image */}
+          <div className="page-panel">
+            <Row className="flex-md-row flex-column g-3">
               <Col xs={12} md={9} className="order-md-1">
-                <Image src={mainImage} fluid className="border rounded w-100" />
+                <Image
+                  src={mainImage}
+                  fluid
+                  className="w-100"
+                  style={{ borderRadius: "10px", background: "#fff" }}
+                />
               </Col>
 
-              {/* Thumbnails - Left on Desktop, Bottom on Mobile */}
               <Col xs={12} md={3} className="d-flex flex-md-column flex-row justify-content-center gap-2 mt-2 mt-md-0">
                 {thumbnails.map((img, index) => (
                   <Image
@@ -157,7 +159,15 @@ export default function ProductPage() {
                     thumbnail
                     className="border"
                     onClick={() => setMainImage(img)}
-                    style={{ cursor: "pointer", width: "60px", height: "60px" }}
+                    style={{
+                      cursor: "pointer",
+                      width: "64px",
+                      height: "64px",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                      borderColor:
+                        mainImage === img ? "var(--brand-orange)" : undefined,
+                    }}
                   />
                 ))}
               </Col>
@@ -165,19 +175,17 @@ export default function ProductPage() {
           </div>
         </Col>
 
-        {/* Right Section (Details) */}
         <Col md={6}>
-          <div className="p-4 border rounded bg-white shadow-sm">
-            <h3 className="fw-bold">{product.name}</h3>
-            {/* <p className="text-muted">SKU: IF HAVE</p> */}
-            <p><b>Categories:</b> {product.products_categories?.length > 0
+          <div className="page-panel h-100">
+            <h3 className="mb-3">{product.name}</h3>
+            <p className="mb-2"><b>Categories:</b> {product.products_categories?.length > 0
                                 ? product.products_categories.map(pc => pc.categories.category_name).join(', ')
                                 : 'No Categories'}
             </p>
-            <p><b>Sport:</b> {product.sports?.sport_name}</p>
-            <p><b>Description:</b></p>
+            <p className="mb-3"><b>Sport:</b> {product.sports?.sport_name}</p>
+            <p className="mb-1"><b>Description:</b></p>
             {product.description && (
-              <div className="product-description mb-0">
+              <div className="product-description mb-4 text-muted">
                 {product.description.split("\n").map((line, index) => (
                   <Fragment key={index}>
                     {index > 0 && <br />}
@@ -186,32 +194,12 @@ export default function ProductPage() {
                 ))}
               </div>
             )}
-            {/* <p className="small">
-              Tax included. <a href="#">Shipping calculated at checkout</a>
-            </p> */}
 
-            {/* Quantity Selector */}
-            {/* <InputGroup className="my-3 w-50">
-              <Button variant="outline-secondary">-</Button>
-              <FormControl type="number" className="text-center" defaultValue="1" />
-              <Button variant="outline-secondary">+</Button>
-            </InputGroup> */}
-
-            {/* Action Buttons */}
             <div className="d-flex gap-2">
-              <Button variant="dark" className="w-50" onClick={addToCart}>
+              <Button className="btn-brand" onClick={addToCart}>
                 Add to Cart
               </Button>
-              {/* <Button variant="primary" className="w-100">
-                Buy with Shop Pay
-              </Button> */}
             </div>
-
-            {/* <div className="mt-3">
-              <a href="#" className="text-decoration-none">
-                More payment options
-              </a>
-            </div> */}
           </div>
         </Col>
       </Row>

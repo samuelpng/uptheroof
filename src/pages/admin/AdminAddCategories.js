@@ -129,22 +129,24 @@ export default function AdminAddCategories() {
 
   return (
     <Fragment>
-      <Container className="py-4">
-        <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+      <div className="admin-shell">
+      <Container>
+        <div className="admin-header">
           <h1 className="mb-0" style={{ fontFamily: "Righteous" }}>
             Manage Categories
           </h1>
           <div>
-            <Button variant="secondary" className="me-2" onClick={() => navigate("/admin")}>
+            <Button variant="outline-secondary" className="me-2" onClick={() => navigate("/admin")}>
               Admin Home
             </Button>
-            <Button variant="dark" onClick={openCreate}>
+            <Button className="btn-brand" onClick={openCreate}>
               <FaPlus /> Add Category
             </Button>
           </div>
         </div>
 
-        <Table responsive bordered hover>
+        <div className="admin-table">
+        <Table responsive hover className="mb-0">
           <thead>
             <tr>
               <th>Category</th>
@@ -184,7 +186,9 @@ export default function AdminAddCategories() {
             )}
           </tbody>
         </Table>
+        </div>
       </Container>
+      </div>
 
       <Modal show={showModal} onHide={closeModal} centered>
         <Modal.Header closeButton>

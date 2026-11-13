@@ -157,30 +157,33 @@ export default function ProductsListing() {
 
     return (
         <Fragment>
-            <div className="container">
-                <div>
-                    <img src="/images/se-banner.png" style={{ width: "100%" }} className="mb-3" alt="Banner" />
-                </div>
+            <div className="site-section pt-4">
                 <Container>
-                    <div className="row">
-                        <div className="col-lg-9 d-flex">
+                    <div className="mb-3 overflow-hidden" style={{ borderRadius: "12px" }}>
+                        <img src="/images/se-banner.png" style={{ width: "100%", display: "block" }} alt="Banner" />
+                    </div>
+                    <div className="page-panel mb-4">
+                    <div className="row g-2 align-items-center">
+                        <div className="col-lg-9 d-flex gap-2">
                             <input
                                 type="text"
-                                className='form-control rounded-0 mb-3'
-                                style={{ width: "80%" }}
+                                className='form-control'
+                                style={{ borderRadius: "999px" }}
+                                placeholder="Search products..."
                                 value={globalSearch}
                                 onChange={(e) => setGlobalSearch(e.target.value)}
                                 onKeyUp={(e) => e.key === "Enter" && search()}
                             />
-                            <Button variant="dark rounded-0" onClick={() => { setCurrentPage(1); search(); }} className="mb-3" style={{ width: "20%" }}>
+                            <Button className="btn-brand" onClick={() => { setCurrentPage(1); search(); }}>
                                 Search
                             </Button>
                         </div>
                         <div className="col-lg-3">
-                            <Button variant="dark rounded-0 mb-3" onClick={() => setShow(true)} style={{ width: '100%' }}>
+                            <Button className="btn-brand-blue w-100" onClick={() => setShow(true)}>
                                 Filters
                             </Button>
                         </div>
+                    </div>
                     </div>
 
                     {products.length ? <ProductCard products={products} /> : <CardPlaceholder />}

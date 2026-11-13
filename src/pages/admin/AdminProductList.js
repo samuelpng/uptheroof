@@ -110,16 +110,17 @@ const AdminProductList = () => {
   };
 
   return (
+    <div className="admin-shell">
     <div className="container">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h1 className="text-center" style={{ fontFamily: "Righteous" }}>
+      <div className="admin-header">
+        <h1 className="mb-0" style={{ fontFamily: "Righteous" }}>
           Manage Products
         </h1>
         <div>
-          <button className="btn btn-secondary me-2" onClick={() => navigate("/admin")}>
+          <button className="btn btn-outline-secondary me-2" onClick={() => navigate("/admin")}>
             Admin Home
           </button>
-          <button className="btn btn-dark" onClick={() => navigate("/admin/create")}>
+          <button className="btn btn-brand" onClick={() => navigate("/admin/create")}>
             <FaPlus /> Create New
           </button>
         </div>
@@ -210,6 +211,7 @@ const AdminProductList = () => {
           </tbody>
         </table>
       </div>
+    </div>
     </div>
   );
 };
