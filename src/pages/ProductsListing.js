@@ -87,6 +87,7 @@ export default function ProductsListing() {
                 name,
                 sport_id,
                 image_url,
+                image_url2,
                 sports(sport_name),
                 ${categoryRelation}
             `, { count: "exact" })
