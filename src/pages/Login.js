@@ -26,7 +26,7 @@ export default function Login() {
 
       if (isAdmin) {
         Swal.fire("Success!", "You are now logged in as admin.", "success");
-        navigate("/admin/list");
+        navigate("/admin");
       } else {
         Swal.fire("Success!", "You are now logged in.", "success");
         navigate("/");

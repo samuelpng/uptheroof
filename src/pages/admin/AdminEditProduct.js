@@ -208,7 +208,7 @@ export default function AdminEditProduct() {
       icon: "success",
       confirmButtonText: "Back to Home screen",
     }).then(() => {
-      navigate("/admin/list");
+      navigate("/admin");
     });
     
       

@@ -1,9 +1,11 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Container, Table, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import { toast } from "react-toastify";
 
 export default function AdminOrderList() {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -74,9 +76,14 @@ export default function AdminOrderList() {
   return (
     <Fragment>
       <Container className="mt-4">
-        <h2 className="text-center mb-4" style={{ fontFamily: "Righteous" }}>
-          Order Management
-        </h2>
+        <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+          <h2 className="mb-0" style={{ fontFamily: "Righteous" }}>
+            Order Management
+          </h2>
+          <Button variant="secondary" onClick={() => navigate("/admin")}>
+            Admin Home
+          </Button>
+        </div>
         
         {orders.length === 0 ? (
           <div className="text-center mt-4">
